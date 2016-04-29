@@ -1,0 +1,65 @@
+{{expand 1} {{{expand 1 title 
+{[%Run all unit tests%] <-- click here to execute unit tests}} {{{expand 0 title 
+{# [%setup%]}} {{{expand 1 title proc\ runTestInSlaveInterp\ testScript\ \{} {{{expand 0 title 
+{interp create test}} {}} {{expand 1 title test\ eval\ \{} {{{expand 0 title 
+{rename ::puts ::puts_tcltest}} {}} {{expand 1 title proc\ puts\ args\ \{} {{{expand 0 title 
+{append ::putsbuffer [lindex $args end]}} {}} {{expand 1 title if\ \{(\[llength\ \$args\]\ ==\ 1)\ ||\ (\[lindex\ \$args\ 0\]\ !=\ \"-nonewline\")\}\ \{} {{{expand 0 title 
+{append ::putsbuffer \n}} {}} {{expand 0 title \}} {}}}}}} {{expand 0 title \}} {}} {{expand 0 title 
+{package require tcltest 2.0}} {}} {{expand 0 title 
+{tcltest::testConstraint interactive 1}} {}}}} {{expand 0 title \}} {}} {{expand 0 title 
+{test eval set auto_path [list $::auto_path]}} {}} {{expand 0 title 
+{catch {test eval "cd [file dirname $testScript]; source $testScript; set ::putsbuffer"} result}} {}} {{expand 0 title 
+{interp delete test}} {}} {{expand 0 title 
+{return $result}} {}} {{expand 0 title \}} {}}}} {{expand 0 title proc\ runtest\ \{dir\ name\}\ \{} {{{expand 1 title 
+{# Execute the test in a separate interpreter}} {{{expand 0 title 
+{#set result [::tkoutline::execSelf -source [file join $::tkoutline::topdir $dir $name.test]]}} {}} {{expand 0 title 
+{set result [runTestInSlaveInterp [file join $::tkoutline::topdir $dir $name.test]]}} {}}}} {{expand 0 title 
+{# Insert or find the Test Results node}} {{{expand 0 title 
+{set found 0}} {}} {{expand 0 title 
+{set title "Test Results"}} {}} {{expand 0 title 
+{set n [tree rootname]}} {}} {{expand 1 title foreach\ sibling\ \[tree\ children\ \$n\]\ \{} {{{expand 1 title if\ \{\[string\ match\ \$title\ \[tree\ set\ \$sibling\ title\]\]\}\ \{} {{{expand 0 title 
+{set found 1}} {}} {{expand 0 title 
+{set n $sibling}} {}} {{expand 0 title break} {}}}} {{expand 0 title \}} {}}}} {{expand 0 title \}} {}} {{expand 1 title if\ \{!\$found\}\ \{} {{{expand 0 title 
+{set n [tree insert $n end]}} {}} {{expand 0 title 
+{tree set $n title $title}} {}}}} {{expand 0 title \}} {}}}} {{expand 1 title 
+{# Display the test results as children of the Test Results node}} {{{expand 0 title 
+{#set summary [lindex [split $result \n] end]}} {}} {{expand 1 title if\ \{!\[regexp\ \"\$name.test:\\\[^\\n\]*\"\ \$result\ summary\]\}\ \{} {{{expand 0 title 
+{set summary "$name.test: [lindex [split $result \n] 0]"}} {}} {{expand 0 title \}} {}}}} {{expand 0 title 
+{set new1 [tree insert $n 0]}} {}} {{expand 0 title 
+{tree set $new1 title $summary}} {}} {{expand 0 title if\ \{\[llength\ \[split\ \[string\ trim\ \$result\]\ \\n\]\]\ >\ 1\}\ \{} {{{expand 0 title 
+{set new2 [tree insert $new1 0]}} {}} {{expand 0 title 
+{tree set $new2 title $result}} {}} {{expand 0 title 
+{tree set $new1 expand 0}} {}} {{expand 0 title \}} {}}}}}} {{expand 0 title 
+{# Color passing results green and failing results red}} {{{expand 0 title if\ \{\[string\ match\ \"*Failed\\t0*\"\ \$summary\]\}\ \{} {{{expand 0 title 
+{set color {dark green}}} {}}}} {{expand 0 title \}\ else\ \{} {{{expand 0 title 
+{set color red}} {}}}} {{expand 0 title \}} {}} {{expand 0 title 
+{text tag configure $color -foreground $color}} {}} {{expand 0 title 
+{text tag add $color [getstartidx $new1] [getendidx $new1]}} {}}}} {{expand 0 title 
+{# Update the display so the results of each test can be seen immediately}} {{{expand 0 title update} {}}}} {{expand 0 title \}} {}}}} {{expand 0 title 
+{set ldir lib}} {}} {{expand 0 title 
+{set odir [file join $ldir outlinewidget]}} {}}}} {{expand 0 title 
+{# [%treeobserver%]}} {{{expand 0 title 
+{runtest $odir treeobserver}} {}}}} {{expand 0 title 
+{# [%treeops%]}} {{{expand 0 title 
+{runtest $odir treeops}} {}}}} {{expand 0 title 
+{# [%treedisplay%]}} {{{expand 0 title 
+{runtest $odir treedisplay}} {}}}} {{expand 0 title 
+{# [%incrsearch%]}} {{{expand 0 title 
+{runtest $odir incrsearch}} {}}}} {{expand 0 title 
+{# [%listitem%]}} {{{expand 0 title 
+{runtest $odir listitem}} {}}}} {{expand 0 title 
+{# [%textprotect%]}} {{{expand 0 title 
+{runtest $odir textprotect}} {}}}} {{expand 0 title 
+{# [%treeconvert%]}} {{{expand 0 title 
+{runtest [file join $ldir treeconvert] convert}} {}}}} {{expand 0 title 
+{# [%xotclite%]}} {{{expand 0 title 
+{runtest [file join $ldir xotcllite] xotcllite}} {}}}} {{expand 0 title 
+{# [%syntax highlighting%]}} {{{expand 0 title 
+{set mdir [file join $ldir markup]}} {}} {{expand 0 title 
+{runtest $mdir markup}} {}} {{expand 0 title 
+{runtest $mdir wikimarkup}} {}}}}}} {{expand 0 title 
+{[%Clear test results%]}} {{{expand 0 title 
+{set n [tree next [getnode current]]}} {}} {{expand 0 title 
+{tree set $n expand 0}} {}} {{expand 1 title foreach\ child\ \[tree\ children\ \$n\]\ \{} {{{expand 0 title 
+{tree delete $child}} {}}}} {{expand 0 title \}} {}}}} {{expand 0 title 
+{Test Results}} {}}}}

@@ -1,0 +1,162 @@
+ 
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ICONS: Examples</title>
+<meta name="description" content="ICONS: Provides a platform independent icon library facility for TCL/TK">
+<meta name="keywords" content="windows development">
+<meta name="generator" content="1st Page 2000">
+<meta name="author" content="Adrian Davis">
+<meta name="robots" content="nofollow">
+<link rev="made" href="mailto:adrian@satisoft.com" title="Icons feedback">
+</head>
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#000080">
+
+<table bgcolor=#000000 width=100% cellpadding=0>
+<tr>
+  <td><b><font size=7 color=#FFFF00 face="Arial, Helvetica">ICONS - Examples</font></b></td>
+  <td rowspan=2 width=50><img src="logo125.gif"></td>
+</tr>
+<tr valign=bottom>
+  <td>
+    <table bgcolor=#999999 width=100%>
+    <tr>
+	<td><a href="index.html"><b><font color=#FFFFFF face="Arial, Helvetica">Home</a></td>
+    <td><a href="manpage.html"><b><font color=#FFFFFF face="Arial, Helvetica">Man Page</a></td>
+    <td><a href="viewIcons.html"><b><font color=#FFFFFF face="Arial, Helvetica">viewIcons</a></td>
+	<td><a href="libraries.html"><b><font color=#FFFFFF face="Arial, Helvetica">Libraries</a></td>
+	<td><a href="download.html"><b><font color=#FFFFFF face="Arial, Helvetica">Download</a></td>
+	<td><a href="license.html"><b><font color=#FFFFFF face="Arial, Helvetica">License</a></td>
+    <td><a href="contact.html"><b><font color=#FFFFFF face="Arial, Helvetica">Contact</a></td>
+    </tr>
+    </table>
+  </td>
+</tr>
+</table>
+
+<font color=black face="Arial, Helvetica" size=2>
+
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>A Simple Example</font>
+</tr>
+</td>
+</table>
+<p>
+It is best to use a simple example to demonstrate the usage of the ICONS package:
+<pre>
+# Request the ICONS package and import the "icons" command.
+package require icons 1.0
+namespace import icons::icons
+
+# Use the "icons" command to create two icons "actreload16" and "navhome16".
+# As no icon library file has been specified it is assumed that the required
+# file is called "tkIcons" in the directory given by the "info library" command.
+icons create {actreload16 navhome16}
+
+# Create two buttons with the previously created icons.
+# NOTE: When the icon images are created the names are prefixed with "::icon::".
+button .b1 -relief flat -image ::icon::actreload16
+button .b2 -relief flat -image ::icon::navhome16
+
+# Pack the buttons into the window. The "-padx" options are simply to create a 
+# gap between the buttons.
+pack .b1 -padx 2 -side left
+pack .b2 -padx 2 -side left
+</pre>
+The above script will create the following:
+<p>
+<img src="simple-example.gif">
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Using Create</font>
+</tr>
+</td>
+</table>
+<p>
+Some examples using the ICONS <b>create</b> mode:
+<p>
+<tt>icons create {actreload16 navhome16}</tt><br>
+Create images for the two specified icons (As in above "Simple Example") using the
+default library.
+<p>
+<tt>icons create -file tkIcons.ikons {actreload16 navhome16}</tt><br>
+Create images for the two specified icons using the "<tt>tkIcons.ikons</tt>" library
+in the directory given by the "<tt>info library</tt>" command.
+<p>
+<tt>icons create -file /home/mydir/myIcons {myicon1 myicon2}</tt><br>
+Create images for the two specified icons using the "<tt>/home/mydir/myIcons</tt>" library.
+<p>
+<tt>icons create -group edit</tt><br>
+Create images for all icons belonging to the "<tt>edit</tt>" group using the default library.
+<p>
+<tt>icons create -group {edit file}</tt><br>
+Create images for all icons belonging to the "<tt>edit</tt>" and "<tt>file</tt>" groups
+using the default library.
+<p>
+<tt>icons create -group {edit file} {actreload16 navhome16}</tt><br>
+Create images for all icons belonging to the "<tt>edit</tt>" and "<tt>file</tt>" groups
+and the two specified icons using the default library.
+<p>
+<tt>icons create -file tkIcons.ikons -group {edit file}</tt><br>
+Create images for all icons belonging to the "<tt>edit</tt>" and "<tt>file</tt>" groups
+using the "<tt>tkIcons.ikons</tt>" library in the directory given by the "<tt>info
+library</tt>" command.
+<p>
+<tt>icons create -group *</tt><br>
+Create images for all icons in the default library.
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Using Delete</font>
+</tr>
+</td>
+</table>
+<p>
+An example using the ICONS <b>delete</b> mode:
+<p>
+<tt>icons delete {actreload16 navhome16}</tt><br>
+Delete images for the two specified icons.
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Using Query</font>
+</tr>
+</td>
+</table>
+<p>
+Some examples using the ICONS <b>query</b> mode:
+<p>
+<tt>icons query {actreload16 navhome16}</tt><br>
+Return default information for the two specified icons...<br>
+<tt>{actreload16 action photo 16x16} {navhome16 nav photo 16x16}</tt><br>
+<p>
+<tt>icons query -file tkIcons.ikons {actreload16 navhome16}</tt><br>
+Return default information for the two specified icons using the "<tt>tkIcons.ikons</tt>" library
+in the directory given by the "<tt>info library</tt>" command...<br>
+<tt>{actreload16 action photo 17x17} {navhome16 nav photo 16x16}</tt><br>
+<p>
+<tt>icons query -group connect</tt><br>
+Return default information for all icons belonging to the "<tt>connect</tt>" group using the default library...<br>
+<tt>{connecting16 connect photo 16x16} {connectno16 connect photo 16x16} {connectyes16 connect photo 16x16}</tt><br>
+<p>
+<tt>icons query -group connect -items ns</tt><br>
+Return <b>n</b>ame and <b>s</b>ize information for all icons belonging to the "<tt>connect</tt>" group using the default library...<br>
+<tt>{connecting16 16x16} {connectno16 16x16} {connectyes16 16x16}</tt><br>
+<p>
+<b>NOTE:</b> The default information is: <tt>ngts</tt> (<b>n</b>ame <b>g</b>roup <b>t</b>ype <b>s</b>ize)
+<p>
+<hr>
+<small>
+Copyright &copy; 2002 <a href="mailto:adrian@satisoft.com">Adrian Davis</a>.
+</small>
+</center>
+</body>
+</html>
+

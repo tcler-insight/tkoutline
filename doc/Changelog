@@ -1,0 +1,91 @@
+{{expand 1} {{{expand 1 nobullet {} title 
+{*0.93* - Released April 8, 2004}} {{{expand 1 title 
+{/New features and enhancements/}} {{{expand 0 title 
+{Support for glob patterns in inter-outline hyperlinks}} {}} {{expand 0 title 
+{Bold, italics, etc. wiki-markup is now preserved when exporting to html}} {}} {{expand 0 title 
+{Added increase/decrease expansion level functionality (see http://tkoutline.sourceforge.net/wiki/48)}} {}} {{expand 0 title 
+{Added the ability to import an outline from indented text and the ability to import an outline from OPML format}} {}} {{expand 0 title 
+{http://tkoutline.sourceforge.net/wiki/Map+levels+to+html+headings - thanks to Laurent Duperval for the idea and code}} {}} {{expand 0 title 
+{[Magic button functionality]}} {}} {{expand 0 title 
+{Keyboard traversal of outline tabs}} {}} {{expand 0 title 
+{Added button bar code from Scott Gamon}} {}} {{expand 0 title 
+{Added ability to edit the preferences file within tkoutline}} {}} {{expand 0 title 
+{User defined code in ~/.tkoutlinerc will be sourced on startup}} {}} {{expand 0 title 
+{Unit tests are now runnable from within tkoutline (see Help/About).}} {}} {{expand 1 title 
+{Internal changes}} {{{expand 0 title 
+{Factored out some generic listitem functionality from the treedisplay functionality (see http://tkoutline.sourceforge.net/wiki/Text+widget+based+listitem+display)}} {}} {{expand 0 title 
+{Upgraded to using the new tcllib tree 2.0 API}} {}} {{expand 0 title 
+{Completely rewrote the code that manages multiple outlines with a much, much cleaner result}} {}}}}}} {{expand 1 title 
+{/Bug fixes/}} {{{expand 0 title 
+{Ctrl-` keybinding is an error on Unix based platforms. Changed the way the keybinding is specified and added ability to configure this key binding}} {}} {{expand 0 title 
+{Fixed bug where the useBulletImages and wikimarkup keywords in the .def file were being ignored}} {}} {{expand 0 title 
+{Fixed problem with launching urls containing '&' on Windows NT/XP/2000 (the part after the '&' never made it to the browser)}} {}} {{expand 0 title 
+{Fixed export to opml and xml so special XML characters are properly encoded. Also fixed HTML export so special HTML characters are properly encoded.}} {}}}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title 
+{*0.92* - Released March 12, 2003}} {{{expand 1 title 
+{Bug fix release}} {{{expand 0 title 
+{The help command fails if the starkit/starpack is in a directory path containing spaces (thanks to David S. Cargo for this report)}} {}} {{expand 0 title 
+{Error when attempting to show the console when tkoutline resided in a directory path containing spaces}} {}} {{expand 0 title 
+{The html export doesn't work--error about bulletType (thanks to Mary Backe for this report)}} {}} {{expand 0 title 
+{Error when clicking on intra-outline links}} {}}}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title 
+{*0.91* - Released March 5, 2003}} {{{expand 1 title 
+{/New features/}} {{{expand 0 title 
+{[Cut/copy/paste functionality] that preserves tree structure}} {}} {{expand 1 title 
+{Standalone outline widget functionality}} {{{expand 0 title 
+{The text widget based outline functionality has been refactored as a standalone outline widget}} {}} {{expand 0 title 
+{Can be queried and modified using an interface like tcllib's tree structure}} {}} {{expand 0 title 
+{API described at http://tkoutline.sourceforge.net/wiki/54}} {}}}} {{expand 0 title 
+{[Hyperlinking to parts of an outline].  Links like [anatomy#heart] jump to the anatomy outline and search for heart. Links like [#heart] will search for "heart" in the current outline.}} {}} {{expand 0 title 
+{Commands for setting the expansion level}} {}} {{expand 0 title 
+{Command to extract a subtree and replace it with a link to the newly extracted outline}} {}} {{expand 1 title 
+{Cross-platform console access}} {{{expand 0 title 
+{For debugging and interactive scripting (http://tkoutline.sourceforge.net/wiki/59)}} {}} {{expand 0 title 
+{Execution takes place within the context of the current outline (i.e. outline methods can be invoked directly as command without specifying the outline object)}} {}}}} {{expand 1 title 
+{Two new export formats}} {{{expand 0 title 
+{opml (http://www.opml.org/) - Thanks to Scott Gamon for this code.}} {}} {{expand 0 title 
+{emailable, wordwrapped text}} {}}}} {{expand 0 title 
+{Added the safe interpreter support back in for outline files with old pre-0.84 format}} {}} {{expand 0 title 
+{Added ability to turn bullets on/off for any node in the tree. This allows vertical whitespace to be added (i.e. an empty node and without the bullet) to an outline.}} {}}}} {{expand 1 title 
+{/Bug fixes/}} {{{expand 0 title 
+{Sometimes the cursor couldn't be place on a node containing no text}} {}} {{expand 0 title 
+{Merging a node with its only child node caused an error (Thanks to Satoshi Imai for pointing me to this bug).}} {}} {{expand 0 title 
+{Backspace at the first character of the first node caused an error (Thanks to Satoshi Imai for pointing me to this bug).}} {}}}}}} {{expand 1 nobullet {} title *0.85*} {{{expand 0 title 
+{Fixed bug in creating safe interpreter (the safe interpreter is only needed for outlines created with versions prior to 0.84) that was preventing tkoutline from starting up.}} {}}}} {{expand 1 nobullet {} title *0.84*} {{{expand 0 title 
+{Changed file format from a Tcl script to a nested Tcl list}} {}} {{expand 0 title 
+{Added duplicate node/duplicate subtree functionality}} {}} {{expand 0 title 
+{Bullets are now images instead of text characters}} {}} {{expand 0 title 
+{Added right-click popup menu}} {}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title *0.77*} {{{expand 0 title 
+{Performance enhancements for opening outlines and saving outlines}} {}} {{expand 0 title 
+{Added access to Help via a menu pick}} {}} {{expand 0 title 
+{Added support for highlighting and launching external URLs}} {}} {{expand 0 title 
+{Added support for bold, italics, underline, and strikeout formatting}} {}} {{expand 0 title 
+{Major internal code reorganization}} {}} {{expand 0 title 
+{Bug fix: the export functions were broken in version 0.65--they now work again}} {}} {{expand 0 title 
+{Menus are now accessible via the keyboard}} {}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title *0.65*} {{{expand 0 title 
+{Multiple outlines can be open at a time using a tabbed notebook interface}} {}} {{expand 0 title 
+{Hyperlinks to other outlines can be created by surrounding text with square braces}} {}} {{expand 0 title 
+{Safe interpreter is now used to source in the outline data files (scripted document version requires bleeding edge vfs-in-core version of tclkit to get this functionality)}} {}} {{expand 0 title 
+{Menu picks are now only active if the command is valid in the current context}} {}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title *0.61*} {{{expand 0 title 
+{Fixed bug with preventing deletion of readonly controls}} {}} {{expand 0 title 
+{Added the ability to save a subtree to a file}} {}} {{expand 0 title 
+{Modified the output file so the tree name is not hard-coded in}} {}} {{expand 0 title 
+{Fixed bug where opening a second tree could get some of the first tree merged in}} {}} {{expand 0 title 
+{Opening a file changes the current directory to the directory of the opened file}} {}} {{expand 0 title 
+{Save file isn't opened for writing until tree successfully converted for output}} {}} {{expand 0 title 
+{New outlines are no longer marked as modified until a user modification}} {}} {{expand 0 title 
+{Fixed bug where a cancelled file open operation hoses the application}} {}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title *0.52*} {{{expand 0 title 
+{Fixed bug where deleting the first node of the tree caused an error}} {}} {{expand 0 title 
+{Allow keybindings and other settings to be specified via configuration file}} {}} {{expand 0 title 
+{Upgraded the distribution from including wcb 2.2 to wcb 2.5}} {}} {{expand 0 title 
+{Bullets can now be toggled between numbered and unnumbered}} {}} {{expand 0 title 
+{Converted indentation to use tabs instead of margin.  This way when text from the outline is copied and pasted into another application, the relative indentation is preserved.}} {}} {{expand 0 title 
+{Fixed access to outline files within the scripted document (i.e. the help file).}} {}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title *0.41*} {{{expand 0 title 
+{Fixed bug in the .tar.gz distribution that prevented tkoutline from even starting up}} {}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 1 nobullet {} title *0.40*} {{{expand 0 title 
+{Initial release}} {}}}}}}

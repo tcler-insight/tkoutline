@@ -1,0 +1,13 @@
+{{expand 1 title Implementation} {{{expand 0 title 
+{The tree data structure from the tcllib (http://tcllib.sourceforge.net) package is used for storing the outline data}} {}} {{expand 0 title 
+{Tk text widget used to display the outline}} {}} {{expand 1 title 
+{Wcb widget callback package by Csaba Nemethi (http://www.nemethi.de/)}} {{{expand 0 title 
+{Used to re-shape the text widget functionality into outline behavior}} {}} {{expand 0 title 
+{Used for "syntax highlighting" formatting and links}} {}}}} {{expand 0 title 
+{Starkit technology (http://www.equi4.com/starkit) comes from Jean-Claude Wippler.  He also distributes the single file Tcl/Tk runtime executable (http://www.equi4.com/tclkit)}} {}} {{expand 0 title 
+{The Bwidgets extension is used for its tabbed notebook interface (http://tcllib.sourceforge.net)}} {}} {{expand 0 title 
+{Code similar to http://wiki.tcl.tk/tcl/557 used for launching external urls}} {}} {{expand 0 title 
+{Cross-platform console functionality from Donald Porter's http://wiki.tcl.tk/786}} {}} {{expand 0 title 
+{Variant of Richard Suchenwirth's one liner "Thingy" OO system (http://wiki.tcl.tk/1225) used for creating obect oriented commands}} {}} {{expand 0 title 
+{TclXML and TclDOM are used for importing opml (http://tclxml.sourceforge.net)}} {}} {{expand 0 title 
+{Icons for the button bar come from Adrian Davis' http://www.satisoft.com/tcltk/icons/}} {}}}}

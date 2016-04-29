@@ -1,0 +1,189 @@
+ 
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ICONS: Home Page</title>
+<meta name="description" content="::ICONS:: Provides a platform independent icon library facility for TCL/TK">
+<meta name="keywords" content="windows development">
+<meta name="generator" content="1st Page 2000">
+<meta name="author" content="Adrian Davis">
+<meta name="robots" content="nofollow">
+<link rev="made" href="mailto:adrian@satisoft.com" title="Icons feedback">
+</head>
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#000080">
+
+<table bgcolor=#000000 width=100% cellpadding=0>
+<tr>
+  <td><b><font size=7 color=#FFFF00 face="Arial, Helvetica">ICONS - Home</font></b></td>
+  <td rowspan=2 width=50><img src="logo125.gif"></td>
+</tr>
+<tr valign=bottom>
+  <td>
+    <table bgcolor=#999999 width=100%>
+    <tr>
+    <td><a href="manpage.html"><b><font color=#FFFFFF face="Arial, Helvetica">Man Page</a></td>
+	<td><a href="viewIcons.html"><b><font color=#FFFFFF face="Arial, Helvetica">viewIcons</a></td>
+	<td><a href="libraries.html"><b><font color=#FFFFFF face="Arial, Helvetica">Libraries</a></td>
+    <td><a href="examples.html"><b><font color=#FFFFFF face="Arial, Helvetica">Examples</a></td>
+	<td><a href="download.html"><b><font color=#FFFFFF face="Arial, Helvetica">Download</a></td>
+	<td><a href="license.html"><b><font color=#FFFFFF face="Arial, Helvetica">License</a></td>
+    <td><a href="contact.html"><b><font color=#FFFFFF face="Arial, Helvetica">Contact</a></td>
+    </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<font color=black face="Arial, Helvetica" size=2>
+<p>
+<b>ANNOUNCE (24th July 2002)</b> ICONS 1.1 Released:
+<ul>
+<li><a href="libraries.html">Libraries</a> containing three extra icon styles (Now approximately 2000 icons in total).
+<li>22x22 sized icons included in all libraries.
+<li><b>Please Note:</b> The standard libraries are not completely backward compatible with the previous release.
+<li>Enhanced <a href="viewIcons.html">viewIcons</a>:
+<ul>
+<li>Facility to create a complete "image create" command in the clipboard when an icon is selected.
+<li>Number of icon columns for the display can be selected.
+<li>An alternative default icon library directory can be specified as a parameter.
+<li>The Browse file open dialog displays only files prefixed "tkIcons" by default.
+</ul>
+</ul>
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>What is ICONS?</font>
+</tr>
+</td>
+</table>
+<p>
+ICONS is a package intended to provide a cross platform icon library facility for TCL/TK
+programmers.
+<p>
+While ICONS can be used to create libraries of application specific icons to simplify
+distribution, a main aim is to encourage the production of a "standard" icon library,
+which could possibly be included in <b>tcllib/tklib</b>.
+<p>
+The icon libraries are simple text files, making them easy to create. A utility for
+displaying the contents of the libraries (<a href="viewIcons.html">viewIcons</a>)
+is included with the package.
+<p>
+Libraries containing five different icon themes are currently available (See <a href="libraries.html">
+Libraries</a>). Each icon theme consists of two library files each containing 16x16 and 22x22 icons:-
+<ul>
+<li>A "<b>sample</b>" library containg icons available from the creator/maintainer. Sample libraries vary
+in the number and names of the icons they contain. Sample library file names have a
+<nobr><b>tkIcons-sample.<i>theme</i></b></nobr> format (For example: <nobr><b>tkIcons-sample.kde</b></nobr>).
+<li>A "<b>standard</b>" library containing a subset of the sample library. All standard libraries
+contain equivalent icons, and are therefore interchangable. Where necessary icons from another source
+are used to fill in where equivalent icons are not available. Standard library file names have a
+<nobr><b>tkIcons.<i>theme</i></b></nobr> format (For example: <nobr><b>tkIcons.kde</b></nobr>).
+<br><br>
+<b><u>Example:</u></b>
+<br><br>
+Below is a simple "toolbar" application:
+<br><br>
+Using the <b>tkIcons.kde</b> library:<br>
+<img src="toolbar-kde.gif">
+<br><br>
+Using the <b>tkIcons.ikons</b> library:<br>
+<img src="toolbar-ikons.gif">
+</ul>
+<p>
+<b>Please Note:</b> The current "standard" library is simply a candidate. I'm hoping for
+feedback giving suggestions as to its final makeup (approximately 200-300 icons?).
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Credits</font>
+</tr>
+</td>
+</table>
+<p>
+A very big thank-you to all of the following...
+<ul>
+<li>The <a href="http://artist.kde.org">artists/developers</a> working on <a href="http://www.kde.org"><b>KDE</b></a> (and associated projects).
+<li><a href="mailto:everaldo@everaldo.com">Everaldo</a> for <b>Crystal</b>.
+<li><a href="mailto:kborrey@skynet.be">Kristof Borrey</a> for <b>iKons</b>.
+<li><a href="mailto:asifalirizwaan@yahoo.com">Asif Ali Rizwaan</a> for <b>Klassic</b>.
+<li><a href="mailto:abug@ozemail.com.au">Rob Cosgrove</a> for <b>Slick</b>.
+<li>Tom Wilkason for the <a href="viewIcons.html">viewIcons</a> clipboard idea and sample code.
+</ul>
+...without whom this project would not have been possible.
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>System Requirements</font>
+</tr>
+</td>
+</table>
+<p>
+TCL/TK 8.0 or greater.
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Installation</font>
+</tr>
+</td>
+</table>
+<p>
+<u>ICONS Download File Contents:</u>
+<p>
+<table border>
+<tr><td><tt>LICENSE</td><td><font size=2>ICONS package license/copyright terms.</td></tr>
+<tr><td><tt>icons.tcl</td><td><font size=2>ICONS package script.</td></tr>
+<tr><td><tt>pkgIndex.tcl</td><td><font size=2>ICONS package index script.</td></tr>
+<tr><td><tt>viewIcons.tcl</td><td><font size=2>Icon viewer utility script.</td></tr>
+<tr><td><tt>tkIcons</td><td><font size=2>Default icon library (KDE style). This is a copy of "tkIcons.kde".</td></tr>
+<tr><td><tt>tkIcons.kde</td><td><font size=2>Icon library (KDE style).</td></tr>
+<tr><td nowrap><tt>tkIcons-sample.kde</td><td><font size=2>Icon library (KDE style, larger selection).</td></tr>
+</table>
+<p>
+<u>To Install the ICONS Package (TGZ):</u>
+<p>
+<ul>
+<li>Create an empty directory in which to unpack the ICONS download file.
+<li>Copy the ICONS download file into the new directory.
+<li>Use <b>cd</b> to change to the new directory (if not already there).
+<li>Uncompress the ICONS download file using <b>gzip</b>.
+<dl><dd><tt>gzip -d icons.tgz</tt></dl>
+<li>Unpack the ICONS download file using <b>tar</b>.
+<dl><dd><tt>tar -xvof icons.tgz</tt></dl>
+<li>Start a TCL/TK Console session.
+<li>Display, and make a note of, the library directory using the TCL <b>info</b> command.
+<dl><dd><tt>info library</tt></dl>
+<li><b>NOTE:</b> You may need to switch to the <b>root</b> (or other) user. Depending on your system.
+<li>Copy the <b>tkIcons</b> files to the "library" directory.
+<li>Create a sub-directory called <b>icons1.0</b> under the "library" directory.
+<li>Use <b>chmod</b> command to set permissions for the <b>icons1.0</b> directory.
+<dl><dd><tt>chmod 755 icons1.0</tt></dl>
+<li>Copy the ICONS package files (<tt>icons.tcl</tt> and <tt>pkgIndex.tcl</tt>) to the <b>icons1.0</b> directory.
+<li>Use <b>cd</b> command to change to the <b>icons1.0</b> directory.
+<li>Use <b>chmod</b> command to set permissions for <tt>icons.tcl</tt> and <tt>pkgIndex.tcl</tt>.
+<dl><dd><tt>chmod 755 *</tt></dl>
+</ul>
+<p>
+<u>To Install the ICONS Package (ZIP):</u>
+<p>
+<ul>
+<li>Create an empty directory in which to unzip the ICONS download file.
+<li>Copy the ICONS download file into the new directory.
+<li>Unzip the ICONS download file using <b>pkzip</b>.
+<li>Start a TCL/TK Console session.
+<li>Display, and make a note of, the library directory using the TCL <b>info</b> command.
+<dl><dd><tt>info library</tt></dl>
+<li>Copy the <b>tkIcons</b> files to the "library" directory.
+<li>Create a sub-directory called <b>icons1.0</b> under the "library" directory.
+<li>Copy the ICONS package files (<tt>icons.tcl</tt> and <tt>pkgIndex.tcl</tt>) to the <b>icons1.0</b> directory.
+</ul>
+<hr>
+<small>
+Copyright &copy; 2002 <a href="mailto:adrian@satisoft.com">Adrian Davis</a>.
+</small>
+</center>
+</body>
+</html>
+

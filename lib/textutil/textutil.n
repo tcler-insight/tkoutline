@@ -1,0 +1,430 @@
+'\"
+'\" Copyright (c) 1998-2000 by nobody :-)
+'\" All rights not reserved.
+'\" 
+'\" RCS: @(#) $Id: textutil.n,v 1.12 2002/02/15 05:35:30 andreas_kupries Exp $
+'\" 
+'\" The definitions below are for supplemental macros used in Tcl/Tk
+'\" manual entries.
+'\"
+'\" .AP type name in/out ?indent?
+'\"	Start paragraph describing an argument to a library procedure.
+'\"	type is type of argument (int, etc.), in/out is either "in", "out",
+'\"	or "in/out" to describe whether procedure reads or modifies arg,
+'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+'\"	needed;  use .AS below instead)
+'\"
+'\" .AS ?type? ?name?
+'\"	Give maximum sizes of arguments for setting tab stops.  Type and
+'\"	name are examples of largest possible arguments that will be passed
+'\"	to .AP later.  If args are omitted, default tab stops are used.
+'\"
+'\" .BS
+'\"	Start box enclosure.  From here until next .BE, everything will be
+'\"	enclosed in one large box.
+'\"
+'\" .BE
+'\"	End of box enclosure.
+'\"
+'\" .CS
+'\"	Begin code excerpt.
+'\"
+'\" .CE
+'\"	End code excerpt.
+'\"
+'\" .VS ?version? ?br?
+'\"	Begin vertical sidebar, for use in marking newly-changed parts
+'\"	of man pages.  The first argument is ignored and used for recording
+'\"	the version when the .VS was added, so that the sidebars can be
+'\"	found and removed when they reach a certain age.  If another argument
+'\"	is present, then a line break is forced before starting the sidebar.
+'\"
+'\" .VE
+'\"	End of vertical sidebar.
+'\"
+'\" .DS
+'\"	Begin an indented unfilled display.
+'\"
+'\" .DE
+'\"	End of indented unfilled display.
+'\"
+'\" .SO
+'\"	Start of list of standard options for a Tk widget.  The
+'\"	options follow on successive lines, in four columns separated
+'\"	by tabs.
+'\"
+'\" .SE
+'\"	End of list of standard options for a Tk widget.
+'\"
+'\" .OP cmdName dbName dbClass
+'\"	Start of description of a specific option.  cmdName gives the
+'\"	option's name as specified in the class command, dbName gives
+'\"	the option's name in the option database, and dbClass gives
+'\"	the option's class in the option database.
+'\"
+'\" .UL arg1 arg2
+'\"	Print arg1 underlined, then print arg2 normally.
+'\"
+'\" RCS: @(#) $Id: man.macros,v 1.1 2000/03/06 21:34:53 ericm Exp $
+'\"
+'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.if t .wh -1.3i ^B
+.nr ^l \n(.l
+.ad b
+'\"	# Start an argument description
+.de AP
+.ie !"\\$4"" .TP \\$4
+.el \{\
+.   ie !"\\$2"" .TP \\n()Cu
+.   el          .TP 15
+.\}
+.ta \\n()Au \\n()Bu
+.ie !"\\$3"" \{\
+\&\\$1	\\fI\\$2\\fP	(\\$3)
+.\".b
+.\}
+.el \{\
+.br
+.ie !"\\$2"" \{\
+\&\\$1	\\fI\\$2\\fP
+.\}
+.el \{\
+\&\\fI\\$1\\fP
+.\}
+.\}
+..
+'\"	# define tabbing values for .AP
+.de AS
+.nr )A 10n
+.if !"\\$1"" .nr )A \\w'\\$1'u+3n
+.nr )B \\n()Au+15n
+.\"
+.if !"\\$2"" .nr )B \\w'\\$2'u+\\n()Au+3n
+.nr )C \\n()Bu+\\w'(in/out)'u+2n
+..
+.AS Tcl_Interp Tcl_CreateInterp in/out
+'\"	# BS - start boxed text
+'\"	# ^y = starting y location
+'\"	# ^b = 1
+.de BS
+.br
+.mk ^y
+.nr ^b 1u
+.if n .nf
+.if n .ti 0
+.if n \l'\\n(.lu\(ul'
+.if n .fi
+..
+'\"	# BE - end boxed text (draw box now)
+.de BE
+.nf
+.ti 0
+.mk ^t
+.ie n \l'\\n(^lu\(ul'
+.el \{\
+.\"	Draw four-sided box normally, but don't draw top of
+.\"	box if the box started on an earlier page.
+.ie !\\n(^b-1 \{\
+\h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.el \}\
+\h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.\}
+.fi
+.br
+.nr ^b 0
+..
+'\"	# VS - start vertical sidebar
+'\"	# ^Y = starting y location
+'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.de VS
+.if !"\\$2"" .br
+.mk ^Y
+.ie n 'mc \s12\(br\s0
+.el .nr ^v 1u
+..
+'\"	# VE - end of vertical sidebar
+.de VE
+.ie n 'mc
+.el \{\
+.ev 2
+.nf
+.ti 0
+.mk ^t
+\h'|\\n(^lu+3n'\L'|\\n(^Yu-1v\(bv'\v'\\n(^tu+1v-\\n(^Yu'\h'-|\\n(^lu+3n'
+.sp -1
+.fi
+.ev
+.\}
+.nr ^v 0
+..
+'\"	# Special macro to handle page bottom:  finish off current
+'\"	# box/sidebar if in box/sidebar mode, then invoked standard
+'\"	# page bottom macro.
+.de ^B
+.ev 2
+'ti 0
+'nf
+.mk ^t
+.if \\n(^b \{\
+.\"	Draw three-sided box if this is the box's first page,
+.\"	draw two sides but no top otherwise.
+.ie !\\n(^b-1 \h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.el \h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.\}
+.if \\n(^v \{\
+.nr ^x \\n(^tu+1v-\\n(^Yu
+\kx\h'-\\nxu'\h'|\\n(^lu+3n'\ky\L'-\\n(^xu'\v'\\n(^xu'\h'|0u'\c
+.\}
+.bp
+'fi
+.ev
+.if \\n(^b \{\
+.mk ^y
+.nr ^b 2
+.\}
+.if \\n(^v \{\
+.mk ^Y
+.\}
+..
+'\"	# DS - begin display
+.de DS
+.RS
+.nf
+.sp
+..
+'\"	# DE - end display
+.de DE
+.fi
+.RE
+.sp
+..
+'\"	# SO - start of list of standard options
+.de SO
+.SH "STANDARD OPTIONS"
+.LP
+.nf
+.ta 4c 8c 12c
+.ft B
+..
+'\"	# SE - end of list of standard options
+.de SE
+.fi
+.ft R
+.LP
+See the \\fBoptions\\fR manual entry for details on the standard options.
+..
+'\"	# OP - start of full description for a single option
+.de OP
+.LP
+.nf
+.ta 4c
+Command-Line Name:	\\fB\\$1\\fR
+Database Name:	\\fB\\$2\\fR
+Database Class:	\\fB\\$3\\fR
+.fi
+.IP
+..
+'\"	# CS - begin code excerpt
+.de CS
+.RS
+.nf
+.ta .25i .5i .75i 1i
+..
+'\"	# CE - end code excerpt
+.de CE
+.fi
+.RE
+..
+.de UL
+\\$1\l'|0\(ul'\\$2
+..
+.TH textutil n 0.5 Textutil "Texts and strings utils"
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+::textutil \- Procedures to manipulate texts and strings..
+.SH SYNOPSIS
+.nf
+\fBpackage require Tcl 8.2\fR
+\fBpackage require textutil ?0.5?\fR
+.sp
+\fBtextutil::adjust\fR \fIstring args\fR
+\fBtextutil::splitx\fR \fIstring {regexp [\\t \\r\\n]+}\fR
+\fBtextutil::tabify\fR \fIstring {num 8}\fR
+\fBtextutil::tabify2\fR \fIstring {num 8}\fR
+\fBtextutil::trim\fR \fIstring {regexp [ \\t]+}\fR
+\fBtextutil::trimleft\fR \fIstring {regexp [ \\t]+}\fR
+\fBtextutil::trimright\fR \fIstring {regexp [ \\t]+}\fR
+\fBtextutil::untabify\fR \fIstring {num 8}\fR
+\fBtextutil::untabify2\fR \fIstring {num 8}\fR
+\fBtextutil::strRepeat\fR \fIstring num\fR
+.fi
+.BE
+.SH DESCRIPTION
+.PP
+The \fB::textutil\fR package provides commands that manipulate
+strings or texts (a.k.a. long strings or string with embedded
+newlines or paragraphs).
+
+.PP
+The complete set of procedures is described below.
+
+.TP
+\fBtextutil::adjust\fR \fIstring args\fR
+Do a justification on the \fIstring\fP according to \fIargs\fP.
+The string is taken as one big paragraph, ignoring any newlines.
+Then the line is formatted according to the options used, and the
+command return a new string with enough lines to contain all the
+printable chars in the input string. A line is a set of chars
+between the beginning of the string and a newline, or between 2
+newlines, or between a newline and the end of the string. If the
+input string is small enough, the returned string won't contain
+any newlines.
+.sp
+By default, any occurrence of spaces characters or tabulation are
+replaced by a single space so each word in a line is separated from
+the next one by exactly one space char, and this forms a \fIreal\fR
+line. Each \fIreal\fR line is placed in a \fIlogical\fR line, which
+have exactly a given length (see \fI-length\fR option below). The
+\fIreal\fR line may have a lesser length. Again by default, any trailing
+spaces are ignored before returning the string (see \fI-full\fR option
+below). The following options may be used after the \fIstring\fP
+parameter, and change the way the command place a \fIreal\fR line in
+a \fIlogical\fR line. 
+.TP
+\fI-full boolean\fR
+if set to \fIfalse\fR, any trailing space chars are deleted before
+returning the string. If set to \fItrue\fR, any trailing space chars are
+left in the string. Default to \fIfalse\fR.
+.TP
+\fI-justify (center|left|plain|right)\fR
+set the justification of the returned string to \fIcenter\fR, \fIleft\fR,
+\fIplain\fR or \fIright\fR. By default, it is set to \fIleft\fR.
+The justification means that any line in the returned string but the last
+one is build according to the value. If the justification is set to
+\fIplain\fR and the number of printable chars in the last line is less
+than 90% of the length of a line (see \fI-length\fR), then this
+line is justified with the \fIleft\fR value, avoiding the expansion of
+this line when it is too small. The meaning of each value is:
+.RS
+.TP
+\fIcenter\fR
+the real line is centered in the logical line. If needed, a set of space
+char are added at the beginning (half of the needed set) and at the end
+(half of the needed set) of the line if required (see \fI-full\fR option).
+.TP
+\fIleft\fR
+the real line is set on the left of the logical line. It means that
+there are no space chars at the beginning of this line. If required, all
+needed space chars are added at the end of the line (see \fI-full\fR
+option).
+.TP
+\fIplain\fR
+the real line is exactly set in the logical line. It means that there
+are no leading or trailing space chars. All the needed space chars are
+added in the \fIreal\fR line, between 2 (or more) words.
+.TP
+\fIright\fR
+the real line is set on the right of the logical line. It means that
+there are no space chars at the end of this line, and there may be some
+space chars at the beginning, despite of the \fI-full\fR option.
+.RE
+.TP
+\fI-length integer\fR
+set the length of the \fIlogical\fR line in the string to \fIinteger\fR.
+\fIinteger\fR must be a positive integer value. Default to \fI72\fR.
+.TP
+\fI-strictlength boolean\fR
+if set to \fIfalse\fR, a line can exceed the specified '-length' if a
+single word is longer than '-length'. If set to \fItrue\fR, words that
+are longer than '-length' are split so that no line exceeds the
+specified '-length'. Default to \fIfalse\fR.
+.TP
+\fBtextutil::splitx\fR \fIstring {regexp [\\t \\r\\n]+}\fR
+Split the \fIstring\fP and return a list. The string is split
+according to the regular expression \fIregexp\fR instead of a simple
+list of chars. Note that if you add parenthesis into the \fIregexp\fR,
+the parentheses part of separator would be added into list as
+additional element. If the \fIstring\fR is empty the result is the
+empty list, like for \fBsplit\fR. If \fIregexp\fR is empty the
+\fIstring\fR is split at every character, like \fBsplit\fR does.
+.TP
+\fBtextutil::tabify\fR \fIstring {num 8}\fR
+Tabify the \fIstring\fP by replacing any substring of \fInum\fP space
+chars by a tabulation and return the result as a new string.
+
+.TP
+\fBtextutil::tabify2\fR \fIstring {num 8}\fR
+Similar to \fBtextutil::tabify\fR this command tabifies the
+\fIstring\fR and returns the result as a new string. A different
+algorithm is used however. Instead of replacing any substring of
+\fInum\fP spaces this comand works more like an editor.
+.sp
+Each line of the text in \fIstring\fR is treated as if there are
+tabstops every \fInum\fR columns. Only sequences of space characters
+containing more than one space character and found immediately before
+a tabstop are replaced with tabs.
+
+.TP
+\fBtextutil::trim\fR \fIstring {regexp [ \\t]+}\fR
+Remove in \fIstring\fP any leading and trailing substring according to
+the regular expression \fIregexp\fR and return the result as a new string.
+This apply on any \fIline\fR in the string, that is any substring between
+2 newline chars, or between the beginning of the string and a newline, or
+between a newline and the end of the string, or, if the string contain no
+newline, between the beginning and the end of the string.
+
+.TP
+\fBtextutil::trimleft\fR \fIstring {regexp [ \\t]+}\fR
+Remove in \fIstring\fP any leading substring according to the regular
+expression \fIregexp\fR and return the result as a new string. This apply
+on any \fIline\fR in the string, that is any substring between 2 newline
+chars, or between the beginning of the string and a newline, or between a
+newline and the end of the string, or, if the string contain no newline,
+between the beginning and the end of the string.
+
+.TP
+\fBtextutil::trimright\fR \fIstring {regexp [ \\t]+}\fR
+Remove in \fIstring\fP any trailing substring according to the regular
+expression \fIregexp\fR and return the result as a new string. This apply
+on any \fIline\fR in the string, that is any substring between 2 newline
+chars, or between the beginning of the string and a newline, or between a
+newline and the end of the string, or, if the string contain no newline,
+between the beginning and the end of the string.
+
+.TP
+\fBtextutil::untabify\fR \fIstring {num 8}\fR
+Untabify the \fIstring\fP by replacing any tabulation char by a substring
+of \fInum\fP space chars and return the result as a new string.
+
+.TP
+\fBtextutil::untabify2\fR \fIstring {num 8}\fR
+
+Untabify the \fIstring\fP by replacing any tabulation char by a
+substring of at most \fInum\fP space chars and return the result as a
+new string. Unlike \fBtextutil::untabify\fR each tab is not replaced
+by a fixed number of space characters.  The command overlays each line
+in the \fIstring\fR with tabstops every \fInum\fR columns instead and
+replaces tabs with just enough space characters to reach the next
+tabstop. This is the complement of the actions taken by
+\fBtextutil::tabify2\fR.
+.sp
+There is one asymmetry though: A tab can be replaced with a single
+space, but not the other way around.
+
+.TP
+\fBtextutil::strRepeat\fR \fItext num\fR
+The implementation depends on the core executing the package. Used
+\fBstring repeat\fR if it is present, or a fast tcl implementation if
+it is not. Returns a string containing the \fItext\fR repeated
+\fInum\fR times. The repetitions are joined without characters between
+them. A value of \fInum\fR <= 0 causes the command to return an empty
+string.
+
+.SH "SEE ALSO"
+regexp, split, string
+
+.SH KEYWORDS
+string, regular expression

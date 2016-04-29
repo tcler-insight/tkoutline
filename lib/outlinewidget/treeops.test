@@ -1,0 +1,541 @@
+lappend ::auto_path ..
+package require Tk
+source [file join [file dirname [info script]] outlinewidget.tcl]
+proc testTreeOps {} {
+    global argv argc
+    package require tcltest 2.1
+    catch {namespace import ::tcltest::*} msg
+    puts $msg
+    catch {namespace import outlinewidget::*} msg
+    puts $msg
+    configure -verbose {body error}
+    package require struct 2.0
+    package require treeconvert
+    #console show
+    proc addSubTree {tree node nestedList} {
+        set idx 0
+        foreach {elem children} $nestedList {
+            $tree insert $node $idx $elem
+            $tree set $elem expand 0 
+            $tree set $elem title $elem
+            if {[llength $children] > 0} {
+                addSubTree $tree $elem $children
+                $tree set $elem expand 1
+            }
+            incr idx
+        }
+    }
+    proc makeTree {nestedList} {
+        set t [struct::tree]
+        $t set root expand 1
+
+        # Assume first element is "root"
+        addSubTree $t root [lindex $nestedList 1]
+        return $t
+    }
+    proc root->node1->node2 {} {
+        set t [struct::tree]
+        $t insert root 0 node1
+        $t insert node1 0 node2
+        $t set root expand 1
+        $t set node1 expand 1
+        $t set node1 title node1
+        $t set node2 expand 1
+        $t set node2 title node2
+        return $t
+    }
+    proc root->node1->node2 {} {makeTree {root {node1 node2}}}
+    proc withOutline {win treeText script} {
+        set treeText [string trim [string trimright $treeText] \n]
+        set t [treeconvert::textToTree $treeText] 
+        $t set root title {}
+        $t walk root n {
+            if {[string match {-*} [$t set $n title]]} {
+                $t set $n title [string range [$t set $n title] 1 end]
+                $t set $n expand 0
+            } elseif {[$t isleaf $n]} {
+                $t set $n expand 0
+            } else {
+                $t set $n expand 1
+            }
+        }
+        outline $win -tree $t
+        if {[catch {uplevel $script} msg]} {
+            # Cleanup and return the error
+            destroy $win
+            clipboard clear
+            return -code error $msg
+        } else {
+            destroy $win
+            clipboard clear
+            return $msg
+        }
+    }
+
+namespace import ::struct::tree
+test tree-4.4.18 {prune in dfs walk} {
+    tree mytree
+    set t [list ]
+    mytree insert root end 0 1 2
+    mytree insert 0 end a b c
+    mytree insert b end I II III
+    lappend t ==
+    mytree walk root {a n} {
+	if {[string equal $n "b"]} {lappend t . ; ::struct::prune}
+	lappend t $a $n
+    }
+    lappend t ==
+    mytree destroy
+    set t
+} {== enter root enter 0 enter a . enter c enter 1 enter 2 ==}
+
+
+    test getExpandLevel.1 {parent and child} {
+        withOutline .o {
+            node1
+                node2
+        } {
+            outlinewidget::getExpandLevel [.o treecmd] node1
+        }
+    } 1
+    test getExpandLevel.2 {collapsed parent and child} {
+        withOutline .o {
+            -node1
+                node2
+        } {
+            outlinewidget::getExpandLevel [.o treecmd] node1
+        }
+    } 0
+    test getExpandLevel.3 {multi-leveled} {
+        withOutline .o {
+             -node1
+                node1.1
+             node2
+                node2.1
+        } {
+            outlinewidget::getExpandLevel [.o treecmd] root
+        }
+    } 2
+    test getExpandLevel.4 {multi-leveled complex} {
+        withOutline .o {
+             -node1
+                node1.1
+             node2
+                node2.1
+                node2.2
+                    node2.2.1 
+                -node2.3
+                    node2.3.1
+                        node2.3.1.1
+             node3
+        } {
+            outlinewidget::getExpandLevel [.o treecmd] root
+        }
+    } 3
+    test decreaseExpandLevel.1 {simple} {
+        withOutline .o {
+            node1
+                node2
+        } {
+            outlinewidget::decreaseExpandLevel [.o treecmd] node1
+            [.o treecmd] set node1 expand
+        }
+    } 0
+    test decreaseExpandLevel.2 {not as simple} {
+        withOutline .o {
+             -node1
+                 node2
+                    node3
+             node4
+                node5
+                    node6
+        } {
+            outlinewidget::decreaseExpandLevel [.o treecmd] root
+            [.o treecmd] attr expand -nodes {node1 node4 node5}
+        }
+    } {node1 0 node4 1 node5 0}
+
+    proc sortedDict {pairedList} {
+        array set a $pairedList
+        set output {}
+        foreach key [lsort [array names a]] {
+            lappend output $key $a($key)
+        }
+        return $output
+    }
+    test setExpandLevel.1 {} {
+        withOutline .o {
+             -node1
+                 node2
+                    node3
+                        node4
+             node5
+                node6
+                    node7
+        } {
+            outlinewidget::hideChildrenBelowLevel 2 [.o treecmd]
+            sortedDict [[.o treecmd] attr expand -glob n*]
+        }
+    } {node1 1 node2 0 node3 1 node4 0 node5 1 node6 0 node7 0}
+
+    test copy.1 {Only part of a node's text is selected} {
+        withOutline .o {
+            node1
+                node2
+        } {
+            .o text tag add sel [.o getstartidx node1]+1c [.o getendidx node1]-1c
+            outlinewidget::copySelectionToClipboard .o
+            clipboard get
+        }
+    } ode
+    test copy.2 {All of a node's text is selected} {
+        withOutline .o {
+            node1
+                node2
+        } {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node1]
+            outlinewidget::copySelectionToClipboard .o
+            clipboard get
+        } 
+    } node1\n
+    test copy.3 {All of a node's text plus part of another is selected} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node2]-2c
+            outlinewidget::copySelectionToClipboard .o
+            clipboard get
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result "node1\n    node2"
+    test copy.4 {All of a collapsed node's text is selected} \
+        -setup {
+            set t [root->node1->node2]
+            $t set node1 expand 0
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node1]
+            outlinewidget::copySelectionToClipboard .o
+            clipboard get
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result "node1\n    node2"
+    test copy.5 {All of a collapsed node's text and some of the next is selected} \
+        -setup {
+            set t [makeTree {root {node1 {node1.1 {}} node2 {node2.1 {}}}}]
+            $t set node1 expand 0
+            $t set node2 expand 0
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node2]-2c
+            outlinewidget::copySelectionToClipboard .o
+            clipboard get
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result "node1\n    node1.1\nnode2\n    node2.1"
+    test copy.6 {Single character node is selected} \
+        -setup {
+            set t [root->node1->node2]
+            $t set node1 title "1"
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node1]
+            outlinewidget::copySelectionToClipboard .o
+            clipboard get
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result "1\n"
+    test copy.7 {Single character 2nd-level node is selected} \
+        -setup {
+            set t [root->node1->node2]
+            $t set node2 title "1"
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node2] [.o getendidx node2]
+            outlinewidget::copySelectionToClipboard .o
+            clipboard get
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result "1\n"
+    test cut.1 {Only part of a node's text is selected} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1]+1c [.o getendidx node1]-1c
+            outlinewidget::cutSelectionToClipboard .o
+            update idletasks
+            list [clipboard get] [outlinewidget::nodesToAscii [.o treecmd] {node1 node2}]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list ode "n1\n    node2"]
+    test cut.2 {All of a node's text is selected for the last top-level node (but not all of the descendents' text} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node1]
+            outlinewidget::cutSelectionToClipboard .o
+            update idletasks
+            list [clipboard get] [outlinewidget::nodesToAscii [.o treecmd] [.o tree children root]] 
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list node1\n "node2\n"]
+    test cut.3 {All of a node's text plus part of another is selected} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node2]-2c
+            outlinewidget::cutSelectionToClipboard .o
+            update idletasks
+            list [clipboard get] [outlinewidget::nodesToAscii [.o treecmd] [.o tree children root]]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list "node1\n    node2" "\n"]
+    test cut.4 {All of a collapsed node's text is selected} \
+        -setup {
+            set t [root->node1->node2]
+            $t set node1 expand 0
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node1]
+            outlinewidget::cutSelectionToClipboard .o
+            update idletasks
+            list [clipboard get] [outlinewidget::nodesToAscii [.o treecmd] [.o tree children root]]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list "node1\n    node2" "\n"]
+    test cut.5 {All of a collapsed node's text and some of the next is selected} \
+        -setup {
+            set t [makeTree {root {node1 {node1.1 {}} node2 {node2.1 {}}}}]
+            $t set node1 expand 0
+            $t set node2 expand 0
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node2]-2c
+            outlinewidget::cutSelectionToClipboard .o
+            update idletasks
+            list [clipboard get] [outlinewidget::nodesToAscii [.o treecmd] [.o tree children root]]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list "node1\n    node1.1\nnode2\n    node2.1" "\n"]
+    test cut.6 {Single character node is selected} \
+        -setup {
+            set t [root->node1->node2]
+            $t delete node2
+            $t set node1 title "1"
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node1] [.o getendidx node1]
+            outlinewidget::cutSelectionToClipboard .o
+            update idletasks
+            list [clipboard get] [outlinewidget::nodesToAscii [.o treecmd] [.o tree children root]]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list "1\n" "\n"]
+    test cut.7 {Single character 2nd-level node is selected} \
+        -setup {
+            set t [root->node1->node2]
+            $t set node2 title "1"
+            outline .o -tree $t 
+            } \
+        -body {
+            .o text tag add sel [.o getstartidx node2] [.o getendidx node2]
+            outlinewidget::cutSelectionToClipboard .o
+            update idletasks
+            list [clipboard get] [outlinewidget::nodesToAscii [.o treecmd] [.o tree children root]]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list "1\n" "node1\n"]
+    test paste.1 {single line should fall through to default handler} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            clipboard append {hello}
+            set result [outlinewidget::pasteTextFromClipboard .o node1]
+            update idletasks
+            lappend result [.o tree set node1 title]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list 0 node1]
+    test paste.2 {Paste single line ending in \n results in new node} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            clipboard append "hello\n"
+            set result [outlinewidget::pasteTextFromClipboard .o node1]
+            update idletasks
+            lappend result [.o tree set node1 title] [.o getnextvisiblenode node1]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list 1 {node1} node3]
+    test paste.3 {paste into node with collapsed child} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            .o tree set node1 expand 0
+            } \
+        -body {
+            clipboard append "    node3\n    node4"
+            outlinewidget::pasteTextFromClipboard .o node1
+            update idletasks
+            set result [.o tree children root]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result {node1 node3 node4}
+    test paste.3 {paste into node with expanded child} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            clipboard append "    node3\n    node4"
+            outlinewidget::pasteTextFromClipboard .o node1
+            update idletasks
+            set result [.o tree children node1]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result {node3 node4 node2}
+    test paste.4 {paste multiple levels of indentation} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            clipboard append "    node3\n        node4"
+            outlinewidget::pasteTextFromClipboard .o node1
+            update idletasks
+            set result [list [.o tree children node1] [.o tree children node3]]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list {node3 node2} node4]
+    test paste.5 {paste multiple levels of indent 2} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            clipboard append "        node3\n    node4"
+            outlinewidget::pasteTextFromClipboard .o node1
+            update idletasks
+            set result [.o tree children node1]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result {node3 node4 node2} 
+    test paste.6 {Paste at last descendent of a node} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            } \
+        -body {
+            clipboard append "node3\nnode4"
+            outlinewidget::pasteTextFromClipboard .o node2
+            update idletasks
+            set result [.o tree children node1]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result {node2 node3 node4}
+    test paste.7 {Paste at leaf node should result in siblings} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            .o tree insert root 1
+            } \
+        -body {
+            clipboard append "node4\nnode5"
+            outlinewidget::pasteTextFromClipboard .o node2
+            update idletasks
+            set result [.o tree children node1]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result {node2 node4 node5}
+    test paste.8 {Blank line in pasted text should get indent from previous line} \
+        -setup {
+            outline .o -tree [root->node1->node2]
+            .o tree set node1 expand 0
+            } \
+        -body {
+            # node5 is the blank line between node4 and node6
+            clipboard append "node3\n    node4\n\nnode6"
+            outlinewidget::pasteTextFromClipboard .o node1
+            update idletasks
+            set result [list [.o tree children node3] [.o tree depth node5]]
+        } \
+        -cleanup {
+            destroy .o
+            clipboard clear
+        } \
+        -result [list {node4 node5} 2]
+# Prevent tcltest from exiting while cleaning up
+#testConstraint interactive 1
+
+# Display the test results
+cleanupTests
+}
+testTreeOps
+# vim: set filetype=tcl :

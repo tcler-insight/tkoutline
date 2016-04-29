@@ -1,0 +1,134 @@
+{{expand 1} {{{expand 0 title 
+{*Command line usage*}} {{{expand 1 title 
+{If you downloaded tclkit and the *starkit* version}} {{{expand 1 title 
+{Open a new outline}} {{{expand 0 title 
+{/tclkit tkoutline.kit/}} {}}}} {{expand 1 title 
+{Open an existing outline}} {{{expand 1 title 
+{/tclkit tkoutline.tkd <myoutline>/}} {{{expand 0 title 
+{where <myoutline> should be replaced by the name of your file}} {}}}}}} {{expand 1 title 
+{Open this help outline}} {{{expand 0 title 
+{/tclkit tkoutline.kit tkoutline.kit/doc/tkoutline-help.tko/}} {}} {{expand 0 title 
+{Or just use the Help/User Manual menu pick}} {}}}}}} {{expand 1 title 
+{If you downloaded and extracted the contents of the *.tar.gz* file}} {{{expand 0 title 
+{From a shell prompt go to the directory where tkoutline was unpacked}} {}} {{expand 1 title 
+{Open a new outline}} {{{expand 0 title 
+{wish bin/main.tcl}} {}}}} {{expand 1 title 
+{Open an existing outline}} {{{expand 1 title 
+{wish bin/main.tcl <myoutline>}} {{{expand 0 title 
+{where <myoutline> should be replaced by the name of your file}} {}}}}}} {{expand 1 title 
+{Open the help outline}} {{{expand 0 title 
+{wish bin/main.tcl doc/tkoutline-help.tko}} {}}}}}}}} {{expand 1 title 
+{*Expanding and collapsing nodes*}} {{{expand 1 title 
+{Clicking and releasing the left mouse button on the triangle symbol pointing down next to a node will collapse it}} {{{expand 0 title 
+{The number in parenthesis to the right of a collapsed node indicates how many descendent nodes it has hidden}} {}}}} {{expand 0 title 
+{Clicking and releasing the left mouse button on the triangle symbol pointing to the right next to a node will expand it.}} {}} {{expand 0 title 
+{Setting the expansion level}} {{{expand 0 title 
+{Keystrokes Ctrl-1 through Ctrl-9 will set the expansion level for the entire outline.}} {}} {{expand 0 title 
+{Keystrokes Alt-0 through Alt-9 will set the expansion level relative to the current node.}} {}} {{expand 0 title 
+{The keystroke Ctrl-` will show all nodes in the outline at the current level}} {}}}} {{expand 0 title 
+{Increasing/decreasing the expansion level}} {{{expand 0 title 
+{*Alt-equals* will increase the expansion level for the node the cursor is on}} {}} {{expand 0 title 
+{*Alt-minus* will decrease the expansion level for the node the cursor is on}} {}}}}}} {{expand 0 title 
+{*Creating nodes*}} {{{expand 1 title 
+{Insert a child of the current node}} {{{expand 1 title 
+{Can be done in any of the following ways:}} {{{expand 0 title 
+{Hit the Insert Key}} {}} {{expand 0 title 
+{Select Insert Child from the Outline menu}} {}} {{expand 0 title 
+{Insert a sibling node and then demote the new node}} {}}}}}} {{expand 1 title 
+{Insert a sibling after the current node}} {{{expand 1 title 
+{Can be done in any of the following ways:}} {{{expand 0 title 
+{Hit Ctrl-Insert}} {}} {{expand 0 title 
+{Select Insert Sibling from the Outline menu}} {}} {{expand 1 title 
+{Place the cursor at the end of a node and hit the Enter Key}} {{{expand 0 title 
+{Note: with this last method any child nodes move to the new node instead of staying with the pre-existing node}} {}}}}}}}} {{expand 1 title 
+{Insert a sibling before the current node}} {{{expand 0 title 
+{Place the cursor at the beginning of a node and hit the Enter Key}} {}}}} {{expand 1 title 
+{Splitting a node into two sibling nodes}} {{{expand 0 title 
+{Place the cursor where the node should be split and hit the Enter Key}} {}}}}}} {{expand 0 title 
+{*Deleting nodes*}} {{{expand 0 title 
+{Current node and all its children are deleted}} {}} {{expand 1 title 
+{Can be done in any of the following ways:}} {{{expand 0 title 
+{Hit Ctrl-Delete}} {}} {{expand 0 title 
+{Select delete from the Outline menu}} {}}}}}} {{expand 0 title 
+{*Merging two nodes*}} {{{expand 0 title 
+{Backspace at the start of a node will merge it with the previous node}} {}} {{expand 0 title 
+{Delete at the end of a node will will merge it with the following node}} {}}}} {{expand 0 title 
+{*Moving nodes*}} {{{expand 1 title 
+{Up and Down one at a time}} {{{expand 0 title 
+{Ctrl-Up Arrow will swap the current node with the sibling before it}} {}} {{expand 0 title 
+{Ctrl-Down Arrow will swap the current node with the sibling after it}} {}} {{expand 0 title 
+{Selecting Move Up or Move Down from the Outline menu is the same as the Ctrl-Up or Ctrl-Down keypresses}} {}}}} {{expand 1 title 
+{Dragging and dropping}} {{{expand 0 title 
+{Place the mouse cursor over the +,-, or *mbol for a node}} {}} {{expand 0 title 
+{Click and hold the left mouse button down}} {}} {{expand 0 title 
+{Drag the node to its desired location}} {}} {{expand 0 title 
+{Release the mouse button}} {}} {{expand 0 title 
+{The node will be place as a sibling before the node it was dropped on}} {}}}} {{expand 1 title 
+{Promote and Demote}} {{{expand 0 title 
+{Ctrl-Right Arrow will demote a node one level}} {}} {{expand 0 title 
+{Ctrl-Left Arrow will promote a node one level}} {}} {{expand 0 title 
+{The Promote and Demote Outline menu picks can be used instead}} {}}}}}} {{expand 0 title 
+{*Duplicating nodes/subtrees*}} {{{expand 0 title 
+{Place the insertion cursor on the node to duplicate}} {}} {{expand 0 title 
+{From the Outline menu select either duplicate node, or duplicate subtree}} {}}}} {{expand 0 title 
+{*Copy, cut, and paste*}} {{{expand 1 title 
+{Selecting text}} {{{expand 0 title 
+{Text can be selected by hitting the arrow keys while holding the Shift key down.  Text can also be selected by moving the mouse with the left button held down.}} {}}}} {{expand 0 title 
+{_Copy_ - Hitting *Ctrl-c* will place the selected text into the clipboard.}} {}} {{expand 0 title 
+{_Cut_ - Hitting *Ctrl-x* will remove the selected text from the outline and place it in the clipboard.}} {}} {{expand 0 title 
+{_Paste_ - Hitting *Ctrl-v* will paste the contents of the clipboard into the tree.}} {}} {{expand 0 title 
+{Copy, Cut, and Paste operations can also be performed by selected the corresponding item from the Edit menu.}} {}}}} {{expand 0 title 
+{*File operations*}} {{{expand 0 title 
+{Saving a file can be accomplished by picking Save or Save As from the File menu or by hitting Ctrl-S}} {}} {{expand 0 title 
+{Open a file by picking Open from the File menu, or by hitting Ctrl-o}} {}} {{expand 0 title 
+{Click the left mouse button on a tab at the top to switch the active outline}} {}} {{expand 0 title 
+{Exit the application by selecting exit from the File menu, or by hitting Ctrl-x}} {}} {{expand 1 title 
+{Exporting an outline}} {{{expand 0 title 
+{There are 5 choices in the "File, Export to" menu pick}} {}} {{expand 0 title 
+{_Ascii_ - exports the outline as a plain text file using tab characters for indentation}} {}} {{expand 0 title 
+{_Html_ - exports the the outline as an html outline using the <ul> or <ol> and <li> tags}} {}} {{expand 0 title 
+{_Xml_ - exports the outline to xml format}} {}} {{expand 0 title 
+{_Email_ - exports the outline to a plain text file that is word-wrapped at 72 characters. Spaces are used for indentation and "-" is used for bullets}} {}} {{expand 0 title 
+{_Opml_ - exports the outline to an outline specific XML format that is standardized at http://www.opml.org/}} {}}}} {{expand 1 title 
+{Subtree operations via the File, Subtree menu}} {{{expand 0 title 
+{_Save_ - causes the descendents of the node containing the insertion cursor to be exported to a file.  This file can then be used just like any other outline file.}} {}} {{expand 0 title 
+{_Load_ - will give a dialog box from which and outline file can be chosen.  The chosen outline will be inserted as a subtree of the node containing the insertion cursor.}} {}} {{expand 0 title 
+{_Extract and Link_ - causes the descendents of the node containing the insertion cursor to be exported to a file.  The subtree will be removed from the outline and replaced with a link to that file.}} {}}}}}} {{expand 0 title 
+{*Inter-outline hyperlinks*}} {{{expand 0 title 
+{Surround some text with square braces to create a hyperlink}} {}} {{expand 0 title 
+{A hyperlink should be the name of a file relative to the directory of the current outline}} {}} {{expand 0 title 
+{When a hyperlink is clicked with the left mouse button, the corresponding outline will be opened}} {}} {{expand 0 title 
+{_Hyperlink to an existing file_}} {{{expand 0 title 
+{The hyperlink will appear like this: [About Tkoutline]}} {}} {{expand 0 title 
+{The square braces are actually there, but they are hidden}} {}} {{expand 0 title 
+{Even though the braces are hidden, they can still be deleted, thereby removing the hyperlink}} {}}}} {{expand 0 title 
+{_Hyperlink to a non-existing file_}} {{{expand 0 title 
+{The hyperlink will appear like this: [This outline does not exist]}} {}} {{expand 0 title 
+{Clicking this hyperlink will open a new outline with the name "This outline does not exist"}} {}}}} {{expand 0 title 
+{_Linking to specific portions of an outline_ (stored search)}} {{{expand 0 title 
+{If the "#" is included in a link, then the text following the "#" will be used to launch a search when the link is opened.}} {}} {{expand 0 title 
+{For example, the link [About Tkoutline#Changelog] will open the [About Tkoutline] outline and then search forward until it finds text matching "Changelog"}} {}} {{expand 1 title 
+{The same "#" trick can be used to link to somewhere in the current outline just by omitting the portion of the link before the "#"}} {{{expand 0 title 
+{For example when the link [#Command line] is clicked, the cursor will jump to the first node in this outline.}} {}}}} {{expand 0 title 
+{This functionality is effectively a "stored search"}} {}}}} {{expand 0 title 
+{_Using glob patterns in a hyperlink_}} {{{expand 1 title 
+{If the text of a hyperlink contains glob patterns (see http://www.tcl.tk/man/tcl8.4/TclCmd/glob.htm#M12 for a list of valid patterns), then clicking the link will return a list of all matching files.}} {{{expand 0 title 
+{Example: [U*]}} {}}}} {{expand 1 title 
+{If only a single file matches the pattern, then clicking the link will jump directly to that file--same as if the link didn't contain the pattern}} {{{expand 0 title 
+{Example: [About*]}} {}}}}}}}} {{expand 0 title 
+{*External hyperlinks*}} {{{expand 0 title 
+{URLs of various types will be recognized as hyperlinks}} {}} {{expand 0 title 
+{Just type in a URL and it will be colored blue.  }} {}} {{expand 0 title 
+{Position the mouse over the link and it will flash red.}} {}} {{expand 0 title 
+{Click on the link and the URL will be launched in an external browser}} {}} {{expand 1 title Examples} {{{expand 0 title http://tkoutline.sourceforge.net/wiki/changelog} {}} {{expand 0 title http://www.google.com} {}}}}}} {{expand 0 title 
+{*[Magic button functionality]*}} {}} {{expand 0 title 
+{*Other formatting*}} {{{expand 0 title 
+{If a word or group of words is surrounded by an asterisk (*), then the word(s) will be *bold*}} {}} {{expand 0 title 
+{/Italics/ can be specified by surrounding text with the forward slash (/)}} {}} {{expand 0 title 
+{Text will be _underlined_ if underscores (_) surround it.}} {}} {{expand 0 title 
+{-Strikethrough- text by surrounding it with (-) dashes}} {}} {{expand 0 title 
+{The markup symbols (*,/,_,-) will disappear once they surround text.  In order to remove the effect, place the cursor were one of the hidden markup symbol is and delete it.}} {}}}} {{expand 0 title 
+{*Configuration of key bindings and various Tk options*}} {{{expand 0 title 
+{The file .tkoutline.def in the main tkoutline directory contains the default definitions for all keybindings}} {}} {{expand 0 title 
+{To customize keybindings, select "Edit preferences" from the edit menu.  Make changes, save the preferences and launch a new instance of tkoutline for the preference changes to take effect.}} {}} {{expand 0 title 
+{In addition to the keybindings, any of the standard Tk options can be configured.  See the Tk man pages for more information.  See http://www.tcl.tk.}} {}}}}}}

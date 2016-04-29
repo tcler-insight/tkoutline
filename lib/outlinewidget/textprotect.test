@@ -1,0 +1,254 @@
+package require tcltest
+catch {namespace import tcltest::*}
+configure -verbose {body error}
+package require Tk
+lappend auto_path ..
+#console show
+source textprotect.tcl
+
+# Text between alternating >< is writable
+# Tags with the line number is automatically applied to the writable text
+# TODO: change marks from "line" to "region"
+proc withProtectedText {win text script} {
+    set text [split [string trimleft [string trimright $text] \n] ><]
+    set textAndTags {}
+    set lineNum 1
+    set separator 0
+    foreach {readonly writable} $text {
+        set readonlyTags readonly
+        if {$separator} {lappend readonlyTags separator; set separator 0}
+        if {[string length $writable] == 0} {set separator 1}
+        if {$lineNum > 1} {set readonly <$readonly}
+        $win insert end $readonly> $readonlyTags
+        $win mark set line$lineNum:first end-1c
+        $win mark gravity line$lineNum:first left
+        if {$lineNum > 1} {
+            $win mark gravity line[expr $lineNum - 1]:last right
+        }
+        $win insert end $writable
+        $win mark set line$lineNum:last end-1c
+        $win mark gravity line$lineNum:last left
+        incr lineNum
+    }
+    $win mark gravity line[expr $lineNum - 1]:last right
+    if {[$win get end-2c] == ">"} {$win tag remove readonly end-2c; $win delete end-2c}
+    setWidgetProtections .t1
+    if {[catch {uplevel $script} msg]} {
+        # Cleanup and return the error
+        $win tag remove readonly 1.0 end
+        $win delete 1.0 end
+        return -code error $msg
+    } else {
+        $win tag remove readonly 1.0 end
+        $win delete 1.0 end
+        return $msg
+    }
+}
+proc myexpr {expr} {
+    if {[uplevel expr [list $expr]]} {return 1} else {
+        return [uplevel subst [list $expr]]
+    }
+}
+catch {destroy .t1}
+text .t1
+.t1 tag configure readonly -background red
+.t1 tag configure separator -background cyan
+test remove-readonly.0 {Inserting text in an empty writable region causes the readonly tag to be removed even though the insertion cursor is somewhere else} {
+    withProtectedText .t1 {
+        >line1<
+        ><
+        >line3<
+    } {
+        .t1 mark set insert 1.0
+        .t1 insert line2:first hello
+        set range [.t1 tag prevrange readonly line2:first]
+        myexpr {([lindex $range 0] == [.t1 index line1:last]) && ([lindex $range 1] == [.t1 index line2:first])}
+    }
+} 1
+test selection.1 {select to lineend where it is readonly} {
+    withProtectedText .t1 {
+        >line1<
+        >line2<
+        >line3<
+    } {
+        .t1 tag add sel line2:first "line2:first lineend"
+        myexpr {[.t1 tag ranges sel] == [list [.t1 index line2:first] [.t1 index line2:last]]}
+    }
+} 1
+test selection.2 {select to linestart where it is readonly} {
+    withProtectedText .t1 {
+        >line1<
+        >line2<
+        >line3<
+    } {
+        .t1 tag add sel "line2:last linestart" line2:last
+        myexpr {[.t1 tag ranges sel] == [list [.t1 index line2:first] [.t1 index line2:last]]}
+    }
+} 1
+catch {destroy .t}
+text .t
+# the tag both is for visual aid only
+set text [list {[-] } readonly line1 {line1} "\n" {readonly} \
+    "\t * " {readonly} line2 {line2} "\n" {separator readonly} \
+    {[+] } readonly line3 {line3} "(10)\n" {readonly}]
+.t tag configure both -background cyan
+.t tag configure separator -background cyan
+.t tag configure readonly -background red
+.t tag configure writable -background white
+.t tag raise both
+.t tag raise separator
+.t configure -font Courier
+eval .t insert 0.0 $text
+setWidgetProtections .t
+test place.1 {place cursor at end of text} {
+    .t mark set insert line2.last
+    .t index insert
+} [.t index line2.last]
+test place.2 {place cursor at start of text} {
+    .t mark set insert line2.first
+    .t index insert
+} [.t index line2.first]
+test place.3 {place cursor at end of widget} {
+    .t mark set insert end
+    .t index insert
+} [.t index line3.last]
+
+test first-left.1 {Index at start of writeable region moving 1 char left} {
+    .t mark set insert line2.first
+    set result [.t index insert]
+    .t mark set insert insert-1c
+    lappend result [.t index insert]
+} [list [.t index line2.first] [.t index line1.last]] 
+test first-left.2 {Index at start of first writeable region moving 1 char left} {
+    .t mark set insert line1.first
+    .t mark set insert insert-1c
+    .t index insert
+} [.t index line1.first] 
+
+test last-right.1 {Index at end of writeable region moving 1 char right} {
+    .t mark set insert line2.last
+    .t mark set insert insert+1c
+    .t index insert
+} [.t index line3.first] 
+test last-right.2 {Index at end of last writeable region moving 1 char right} {
+    .t mark set insert line3.last
+    .t mark set insert insert+1c
+    .t index insert
+} [.t index line3.last] 
+
+test home.1 {Simulate hitting the Home key from the middle of a line} {
+    .t mark set insert line2.first+2c
+    .t mark set insert "insert linestart"
+    .t index insert
+} [.t index line2.first]
+test home.2 {Simulate hitting the Home key from the middle of the first line} {
+    .t mark set insert line1.first+2c
+    .t mark set insert "insert linestart"
+    .t index insert
+} [.t index line1.first]
+test home.3 {Simulate hitting the Home key from the start of a middle line} {
+    .t mark set insert line2.first
+    .t mark set insert "insert linestart"
+    .t index insert
+} [.t index line2.first]
+
+test end.1 {Simulate hitting the End key from the middle of a line} {
+    .t mark set insert line2.first+2c
+    .t mark set insert "insert lineend"
+    .t index insert
+} [.t index line2.last]
+test end.2 {Simulate hitting the End key from the middle of the last line} {
+    .t mark set insert line3.first+2c
+    .t mark set insert "insert lineend"
+    .t index insert
+} [.t index line3.last]
+test end.3 {Simulate hitting the End key from the end of a middle line} {
+    .t mark set insert line2.last
+    .t mark set insert "insert lineend"
+    .t index insert
+} [.t index line2.last]
+
+test delete-single.1 {Delete the first character of a writable region} {
+    .t delete line2.first
+    .t get line2.first line2.last
+} ine2
+test delete-single.2 {Delete the last character of a writable region} {
+    .t delete line2.last-1c
+    .t get line2.first line2.last
+} ine
+test delete-single.3 {Delete a character not in writable region} {
+    .t delete line2.first-1c
+    .t get "line2.first linestart" "line2.last lineend"
+} "\t * ine"
+set res [.t get line1.first line2.first]
+test delete-range.1 {Delete region that isn't all writable} {
+    .t delete line1.first line2.first
+    .t get line1.first line2.first
+} $res
+set res [.t get line2.last line3.first-1c]
+test delete-range.2 {Delete region that isn't any writable} {
+    .t delete line2.last line3.first-1c
+    .t get line2.last line3.first-1c
+} $res
+set line2-first [.t index line2.first]
+test delete-range.3 {Delete an entire writable region} {
+    .t delete line2.first line2.last
+    .t tag ranges line2
+} {}
+test place.4 {place cursor at a readonly section of a line that had the readonly sections merge together because all the writable region was deleted} {
+    .t mark set insert line3.last-1line
+    .t index insert
+} [set line2-first]
+test first-left.3 {Index at start of writable region move left toward where all text of a writable region was deleted} {
+    .t mark set insert line3.first
+    .t mark set insert insert-1c
+    .t index insert
+} [set line2-first]
+test last-right.3 {Index at end of a writeable region moving 1 char right where all text of the next writable region was deleted} {
+    .t mark set insert line1.last
+    .t mark set insert insert+1c
+    .t index insert
+} [set line2-first] 
+
+test remove-readonly.1 {Readonly tag gets removed when a character is inserted} {
+    .t mark set insert [set line2-first]
+    .t insert insert h
+    .t tag names [set line2-first] 
+} {}
+
+.t tag remove readonly 1.0 end
+.t delete 1.0 end
+eval .t insert 0.0 $text
+.t delete line2.first line2.last
+test remove-readonly.2 {Readonly tag gets removed when a string is inserted} {
+    .t mark set insert [set line2-first]
+    .t insert insert foo
+    concat [.t tag names [set line2-first]] [.t tag names [set line2-first]+1c] [.t tag names [set line2-first]+2c] 
+} {}
+test add-separator.1 {Deleting all the text of a writable region should result in a separator tag being inserted} {
+    .t tag remove separator 1.0 end
+    .t delete line3.first line3.last
+    .t tag ranges separator
+} {3.4 4.0} 
+
+.t tag remove readonly 1.0 end
+.t delete 1.0 end
+eval .t insert 0.0 $text
+test cursor-after-delete.1 {If the cursor ends up in a readonly region after text is deleted, then it should be moved} {
+    .t mark set insert line2.first
+    .t tag remove readonly "line2.first linestart" "line2.last lineend + 1c"
+    .t delete "line2.first linestart" "line2.last lineend + 1c"
+    .t index insert
+} [.t index line2.first]
+test cursor-after-delete.2 {If cursor is not in readonly, then it should remain} {
+    .t mark set insert line1.first+1c
+    .t delete insert
+    .t index insert
+} [.t index line1.first+1c]
+
+# Prevent tcltest from exiting while cleaning up
+#testConstraint interactive 1
+
+# Display the test results
+cleanupTests
+# vim: set filetype=tcl :

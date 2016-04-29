@@ -1,0 +1,205 @@
+ 
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ICONS: Libraries</title>
+<meta name="description" content="ICONS: Provides a platform independent icon library facility for TCL/TK">
+<meta name="keywords" content="windows development">
+<meta name="generator" content="1st Page 2000">
+<meta name="author" content="Adrian Davis">
+<meta name="robots" content="nofollow">
+<link rev="made" href="mailto:adrian@satisoft.com" title="Icons feedback">
+</head>
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#000080">
+
+<table bgcolor=#000000 width=100% cellpadding=0>
+<tr>
+  <td><b><font size=7 color=#FFFF00 face="Arial, Helvetica">ICONS - Libraries</font></b></td>
+  <td rowspan=2 width=50><img src="logo125.gif"></td>
+</tr>
+<tr valign=bottom>
+  <td>
+    <table bgcolor=#999999 width=100%>
+    <tr>
+	<td><a href="index.html"><b><font color=#FFFFFF face="Arial, Helvetica">Home</a></td>
+    <td><a href="manpage.html"><b><font color=#FFFFFF face="Arial, Helvetica">Man Page</a></td>
+    <td><a href="viewIcons.html"><b><font color=#FFFFFF face="Arial, Helvetica">viewIcons</a></td>
+	<td><a href="examples.html"><b><font color=#FFFFFF face="Arial, Helvetica">Examples</a></td>
+	<td><a href="download.html"><b><font color=#FFFFFF face="Arial, Helvetica">Download</a></td>
+	<td><a href="license.html"><b><font color=#FFFFFF face="Arial, Helvetica">License</a></td>
+    <td><a href="contact.html"><b><font color=#FFFFFF face="Arial, Helvetica">Contact</a></td>
+    </tr>
+    </table>
+  </td>
+</tr>
+</table>
+
+<font color=black face="Arial, Helvetica" size=2>
+
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Available Libraries</font>
+</tr>
+</td>
+</table>
+<p>
+For each icon style there are two libraries. A "sample" library containing the icons as produced
+by the creator/maintainer, and a "standard" library. The standard libraries all have equivalent
+icons with the same names. When using the standard libraries the icon theme of an application
+can be changed simply by using a different standard library without the need to amend the
+source code.
+<p>
+In order to ensure that all of the standard libraries have equivalent icons, it has sometimes
+been neccessary to create/edit icons to fill in where equivalent icons are not available.
+<p>
+<table border cellpadding=2>
+<tr><td colspan=7>The icon samples below were all created using the following icons from the standard libraries:-</td></tr>
+<tr><td><font size=2>navback22</td><td><font size=2>navforward22</td><td><font size=2>navhome22</td><td><font size=2>actreload22</td><td><font size=2>edit22</td><td><font size=2>editcut22</td><td><font size=2>editcopy22</td></tr>
+<tr><td><font size=2>editpaste22</td><td><font size=2>filenew22</td><td><font size=2>fileopen22</td><td><font size=2>filefind22</td><td><font size=2>fileprint22</td><td><font size=2>filesave22</td><td><font size=2>actstop22</td></tr>
+</table>
+<p>
+<table border>
+<tr><td><font size=2><b>Crystal:</b> by <a href="mailto:everaldo@everaldo.com">Everaldo</a></td></tr>
+<tr><td><img src="library-crystal.gif"></td></tr>
+</table>
+<p>
+<table border>
+<tr><td><font size=2><b>iKons:</b> by <a href="mailto:kborrey@skynet.be">Kristof Borrey</a></td></tr>
+<tr><td><img src="library-ikons.gif"></td></tr>
+</table>
+<p>
+<table border>
+<tr><td><font size=2><b>KDE:</b> by <a href="mailto:icons@kde.org">The KDE Artists/Developers</a></td></tr>
+<tr><td><img src="library-kde.gif"></td></tr>
+</table>
+<p>
+<table border>
+<tr><td><font size=2><b>Klassic:</b> by <a href="mailto:asifalirizwaan@yahoo.com">Asif Ali Rizwaan</a></td></tr>
+<tr><td><img src="library-klassic.gif"></td></tr>
+</table>
+<p>
+<table border>
+<tr><td><font size=2><b>Slick:</b> by <a href="mailto:abug@ozemail.com.au">Rob Cosgrove</a></td></tr>
+<tr><td><img src="library-slick.gif"></td></tr>
+</table>
+<p>
+<b>PLEASE NOTE:</b> The icon sizes in the sample libraries are as specified by the creator/maintainer
+and in some cases do match the atual size "class".
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Installation</font>
+</tr>
+</td>
+</table>
+<p>
+<u>Icon Library Download File Contents:</u>
+<p>
+<table border>
+<tr><td><tt>tkIcons.<i>theme</i></td><td><font size=2>Standard Icon library.</td></tr>
+<tr><td nowrap><tt>tkIcons-sample.<i>theme</i></td><td><font size=2>Sample Icon library.</td></tr>
+</table>
+<p>
+Where <tt><i>theme</i></tt> identifies the icon style (For example: <nobr><b>tkIcons-sample.kde</b></nobr>).
+<p>
+<u>To Install an Icon Library (TGZ):</u>
+<p>
+<ul>
+<li>Create an empty directory in which to unpack the icon library download file.
+<li>Copy the icon library download file into the new directory.
+<li>Use <b>cd</b> to change to the new directory (if not already there).
+<li>Uncompress the icon library download file using <b>gzip</b>.
+<dl><dd><tt>gzip -d icons-ikons.tgz</tt></dl>
+<li>Unpack the icon library download file using <b>tar</b>.
+<dl><dd><tt>tar -xvof icons-ikons.tgz</tt></dl>
+<li>Start a TCL/TK Console session.
+<li>Display, and make a note of, the library directory using the TCL <b>info</b> command.
+<dl><dd><tt>info library</tt></dl>
+<li><b>NOTE:</b> You may need to switch to the <b>root</b> (or other) user. Depending on your system.
+<li>Copy the <b>tkIcons</b> files to the "library" directory.
+</ul>
+<p>
+<u>To Install an Icon Library (ZIP):</u>
+<p>
+<ul>
+<li>Create an empty directory in which to unzip the icon library download file.
+<li>Copy the icon library download file into the new directory.
+<li>Unzip the icon library download file using <b>pkzip</b>.
+<li>Start a TCL/TK Console session.
+<li>Display, and make a note of, the library directory using the TCL <b>info</b> command.
+<dl><dd><tt>info library</tt></dl>
+<li>Copy the <b>tkIcons</b> files to the "library" directory.
+</ul>
+<p>
+<u>To Set The Default Icon Library:</u>
+<p>
+<ul>
+<li>Copy the required default icon library to the name <b>tkIcons</b> in the "library" directory.
+</ul>
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Creating Libraries</font>
+</tr>
+</td>
+</table>
+<p>
+Icon libraries have the following format:
+<p>
+<i>name</i>:<i>groups</i>:<i>type</i>:<i>size</i>:<i>image-data</i>
+<dl>
+<dd><table>
+<tr><td><font size=2><b><i>name</i></b></td><td><font size=2>Icon name (Must be unique).
+<tr><td><font size=2><b><i>groups</i></b></td><td><font size=2>List of groups to which icon belongs (Must be at least one).
+<tr><td><font size=2><b><i>type</i></b></td><td><font size=2>Image data type (Only <tt>photo</tt> currently supported).
+<tr><td><font size=2><b><i>size</i></b></td><td><font size=2>Size of icon (<i>width</i><b>x</b><i>height</i>, In pixels).
+<tr><td><font size=2><b><i>image-data</i></b></td><td><font size=2>Image data (Base64 encoded GIF).
+</table>
+</dl>
+<p>
+Icons can belong to any number of <b><i>groups</i></b>. The order in which the groups
+are specified is not important.
+<p>
+In the current release, the <b><i>type</i></b> and <b><i>size</i></b> fields are not used
+and are included for information only. However, they should be specified as they may be 
+required by future releases.
+<p>
+As <a href="viewIcons.html">viewIcons</a> orders the icons by name, the included candidate
+"standard" libraries use a simple naming scheme in order to group related icons when using
+this utility:
+<p>
+<i>primary-group-id description size</i>
+<p>
+<b>Example:</b> <tt>actreload16</tt> (<b>act</b>ion group, <b>reload</b> image, size <b>16</b>x16)
+<p>
+The size used in the naming scheme should relect the size "class" of the icon, which in
+some cases will be approximate as some of the icons may  actually be 15 or 17 pixels
+in size. I feel that it is more important to get a good looking icon than to stick
+rigidly to a partictlar size. If it is important to line up buttons created with
+slightly different sized icons, the button width/height can be set to the size of the
+largest icon image (bearing in mind that other libraries may be used with the application).
+<p>
+<p>
+<u>Examples:</u>
+<p>
+<tt>actreload16:action:photo:16x16:R0lGODlhEAAQAIUAAPwCBCRaJBxW ...</tt>
+<p>
+If the above icon were to belong to two groups <tt>action</tt> and <tt>mygroup</tt>
+the library record will be:
+<p>
+<tt>actreload16:action mygroup:photo:16x16:R0lGODlhEAAQAIUAAPwCBCRaJBxW ...</tt>
+<p>
+(In the above examples the data field is truncated)
+<p>
+<hr>
+<small>
+Copyright &copy; 2002 <a href="mailto:adrian@satisoft.com">Adrian Davis</a>.
+</small>
+</center>
+</body>
+</html>
+

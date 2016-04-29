@@ -1,0 +1,114 @@
+lappend ::auto_path ..
+proc testTreeConvert {} {
+    global argv argc
+    package require tcltest 2.1
+    catch {namespace import ::tcltest::*} msg
+    puts $msg
+    configure -verbose {body error}
+    package require Tk
+    package require struct 2.0
+    package require treeconvert
+    namespace import treeconvert::*
+    #catch {console show}
+    proc withTree {treeText script} {
+        upvar t t
+        set treeText [string trim [string trimright $treeText] \n]
+        set t [treeconvert::textToTree $treeText] 
+        $t set root title {}
+        $t walk root n {
+            if {[string match {-*} [$t set $n title]]} {
+                $t set $n title [string range [$t set $n title] 1 end]
+                $t set $n expand 0
+            } else {
+                $t set $n expand [expr ![$t isleaf $n]]
+            }
+        }
+        if {[catch {uplevel $script} msg]} {
+            # Cleanup and return the error
+            $t destroy
+            return -code error $msg
+        } else {
+            $t destroy
+            return $msg
+        }
+    }
+    test toHtml.1 {Simple conversion to html} {
+        withTree {
+            node1
+                node2
+            node3
+        } {
+            treeToHtml $t
+        }
+    } {<html><head></head><body><li>node1
+<ul>
+<li>node2
+</ul>
+<li>node3
+</body></html>}
+
+    test toXml.1 {Simple conversion to xml} {
+        withTree {
+            node1
+                node2
+            node3
+        } {
+            treeToXml $t
+        }
+    } {<outline>
+<node title="node1" expand="1">
+    <node title="node2" expand="0"/>
+</node>
+<node title="node3" expand="0"/>
+</outline>
+}
+
+    test toOpml.1 {Simple conversion to opml} {
+        withTree {
+            node1
+                node2
+            node3
+        } {
+            rename clock clock.bak
+            proc clock args {return date}
+            set result [treeToOpml $t]
+            rename clock ""
+            rename clock.bak clock
+            set result
+        }
+    } {<?xml version="1.0" encoding="ISO-8859-1"?>
+<opml version="1.0">
+
+     <head>
+          <title/>
+          <dateCreated>date</dateCreated>
+          <dateModified>date</dateModified>
+          <ownerName/>
+          <ownerEmail/>
+          <expansionState/>
+          <vertScrollState/>
+          <windowTop/>
+          <windowLeft/>
+          <windowBottom/>
+          <windowRight/>
+     </head>
+
+     <body>
+
+          <outline text="node1">
+               <outline text="node2"></outline>
+          </outline>
+          <outline text="node3"></outline>
+     </body>
+
+</opml>
+}
+
+    # Prevent tcltest from exiting while cleaning up
+    #testConstraint interactive 1
+
+    # Display the test results
+    cleanupTests
+}
+testTreeConvert
+# vim: set filetype=tcl :

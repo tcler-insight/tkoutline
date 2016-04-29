@@ -1,0 +1,413 @@
+package require Tk
+source [file join [file dirname [info script]] treeobserver.tcl]
+source [file join [file dirname [info script]] treedisplay.tcl]
+source [file join [file dirname [info script]] outlinewidget.tcl]
+namespace eval outlinewidget {
+proc testTreeObs {} {
+    global argv argc
+    package require tcltest
+    catch {namespace import ::tcltest::*} msg
+    puts $msg
+    catch {configure -verbose {body error}} msg
+    puts $msg
+    package require struct 2.0
+    package require treeconvert
+    text .t
+    #catch {console show}
+    proc withTreeObserver {win treeText script} {
+        upvar t t
+        set treeText [string trim [string trimright $treeText] \n]
+        set t [treeconvert::textToTree $treeText] 
+        $t set root title {}
+        $t walk root n {
+            if {[string match {-*} [$t set $n title]]} {
+                $t set $n title [string range [$t set $n title] 1 end]
+                $t set $n expand 0
+            } else {
+                $t set $n expand 1
+            }
+        }
+        showDescendents $win $t root
+        set t [initTreeObservation $win $t]
+        if {[catch {uplevel $script} msg]} {
+            # Cleanup and return the error
+            $win delete 1.0 end
+            $t destroy
+            return -code error $msg
+        } else {
+            $win delete 1.0 end
+            $t destroy
+            return $msg
+        }
+    }
+    proc isNodeVisible {args} {eval listitem::exists $args}
+    proc getNextVisibleNode {args} {eval listitem::next $args}
+    proc getPrevVisibleNode {args} {eval listitem::prev $args}
+    proc getNodeSuffix {win node} {listitem::getField $win $node suffix}
+    test cut.1 {cutting a hidden leaf node} {
+        withTreeObserver .t {
+            -node1
+                node2
+        } {
+            $t cut node2
+            update idletasks
+            listitem::getField .t node1 bullet
+        }
+    } " * "
+    test cut.2 {cut leaf node whose grandparent is the first visible ancestor} {
+        withTreeObserver .t {
+            -node1
+                -node2
+                    node3
+        } {
+            $t cut node3
+            update idletasks
+            listitem::getField .t node1 suffix
+        }
+    } "(1)"
+    test cut.3 {cut visible leaf node} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+        } {
+            $t cut node3
+            update idletasks
+            list [isNodeVisible .t node3] [listitem::getField .t node2 bullet]
+        } 
+    } [list 0 { * }]
+    test cut.4 {cut visible,expanded non-leaf node} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+        } {
+            $t cut node2
+            update idletasks
+            list [isNodeVisible .t node2] \
+                 [getNextVisibleNode .t node1] \
+                 [regexp -inline {level[0-9]+} [.t tag names [listitem::index .t node3.text.first]]]
+        }
+    } [list 0 node3 level2]
+    test cut.5 {cut last remaining node} {
+        withTreeObserver .t {
+            node1
+        } {
+            catch {$t cut node1} msg
+            update idletasks
+            string map {\n {\n} " " {\s}} [.t get 1.0 end-1c]
+        }
+    } {\s*\s\s\s\s\n}
+    test move.1 {visible root grandchild to root child} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t move root 0 node2
+            update idletasks
+            list [isNodeVisible .t node2] [getNextVisibleNode .t node2] [getPrevVisibleNode .t node2]
+        }
+    } [list 1 node1 ""]
+    test move.2 {visible root grandchild to root child} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t move root 1 node2
+            update idletasks
+            list [isNodeVisible .t node2] [getNextVisibleNode .t node2] [getPrevVisibleNode .t node2]
+        }
+    } [list 1 "" "node1"]
+    test move.3 {visible node grandchild to node child} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+        } {
+            $t move node1 0 node3
+            update idletasks
+            list [isNodeVisible .t node3] [getNextVisibleNode .t node3] [getPrevVisibleNode .t node3] [listitem::getField .t node2 bullet]
+        }
+    } [list 1 "node2" "node1" " * "]
+    test move.4 {invisible node grandchild to node child} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+        } {
+            $t move node1 0 node3
+            update idletasks
+            list [isNodeVisible .t node3] [getNextVisibleNode .t node3] [getPrevVisibleNode .t node3] [getNodeSuffix .t node2]
+        }
+    } [list 1 "node2" "node1" { }]
+    test move.4.2 {invisible node grandchild to invisible node child} {
+        withTreeObserver .t {
+            -node1
+                -node2
+                    node3
+        } {
+            $t move node1 0 node3
+            update idletasks
+            isNodeVisible .t node3
+        }
+    } 0
+    test move.5 {move node with descendents} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+                        node4
+        } {
+            $t move root 0 node2
+            update idletasks
+            list [getNextVisibleNode .t node2] [getPrevVisibleNode .t node2] [getPrevVisibleNode .t node1]
+        }
+    } [list node3 {} node4]
+    test move.6 {move multiple nodes} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+                        node4
+        } {
+            $t move root 0 node3 node4
+            update idletasks
+            list [getNextVisibleNode .t node3] [getPrevVisibleNode .t node4] [getPrevVisibleNode .t node1] [$t set node2 expand]
+        }
+    } [list node4 node3 node4 0]
+    test move.7 {move multiple nodes from different parents} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+                    node4
+                node5
+        } {
+            $t move root 0 node3 node5
+            update idletasks
+            list [getNextVisibleNode .t node3] [getPrevVisibleNode .t node5] [getPrevVisibleNode .t node1]
+        }
+    } [list node5 node3 node5]
+    test move.8 {move from last node in widget} {
+        withTreeObserver .t {
+            node1
+            node2
+            node3
+        } {
+            $t move root 1 node3
+            update idletasks
+            list [isNodeVisible .t node3] [getNextVisibleNode .t node3] [getPrevVisibleNode .t node3] [catch {listitem::index .t node2.bullet.first}]
+        }
+    } [list 1 node2 node1 0]
+    test move.9 {move collapse child where child is the last visible child} {
+        withTreeObserver .t {
+            node1
+                node2
+                -node3
+                    node4
+            node5
+        } {
+            $t move root 1 node3
+            update idletasks
+            list [isNodeVisible .t node3] [getNextVisibleNode .t node3] [getPrevVisibleNode .t node3]
+        }
+    } [list 1 node5 node2]
+    test delete.1 {delete visible root grandchild} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t delete node2
+            update idletasks
+            list [isNodeVisible .t node2] [listitem::getField .t node1 bullet]
+        }
+    } [list 0 " * "]
+    test delete.2 {deleting grandchild of collapsed node should cause redraw of the node} {
+        withTreeObserver .t {
+            -node1
+                node2
+                    node3
+                    node4
+                node5
+        } {
+            $t delete node3
+            update idletasks
+            getNodeSuffix .t node1
+        }
+    } (3)
+    test delete.3 {delete last remaining node} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t delete node1
+            update idletasks
+            string map {\n {\n} " " {\s}} [.t get 1.0 end-1c]
+        }
+    } {\s*\s\s\s\s\n}
+    test insert.1 {insert into expanded node} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t insert node1 0 node3
+            update idletasks
+            list [isNodeVisible .t node3] [getNextVisibleNode .t node3] [listitem::getField .t node1 bullet]
+        }
+    } [list 1 node2 {[-]}]
+    test insert.1.5 {insert into expanded node at non-zero index} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t insert node1 1 node3
+            update idletasks
+            list [isNodeVisible .t node3] [getPrevVisibleNode .t node3] [listitem::getField .t node1 bullet]
+        }
+    } [list 1 node2 {[-]}]
+    test insert.2 {insert into leaf} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t insert node2 0 node3
+            update idletasks
+            list [isNodeVisible .t node3] [listitem::getField .t node2 bullet]
+        }
+    } [list 1 {[-]}]
+    test insert.3 {insert without specifying node name} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            set n [$t insert node2 0]
+            update idletasks
+            list [isNodeVisible .t $n] [listitem::getField .t node2 bullet]
+        }
+    } [list 1 {[-]}]
+    test title.1 {Changes in a nodes text should be redrawn} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t set node1 title "blah blah" 
+            update idletasks
+            getNodeText .t node1
+        }
+    } "blah blah"
+    test bullet.1 {Changes in a nodes bullet key should be redrawn} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t set node1 nobullet ""
+            update idletasks
+            set result [list [listitem::getField .t node1 bullet]]
+            $t unset node1 nobullet
+            update idletasks
+            lappend result [listitem::getField .t node1 bullet] 
+        }
+    } [list {} {[-]} ]
+    test expand.1 {collapse an expanded node} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t set node1 expand 0
+            update idletasks
+            list [isNodeVisible .t node2] [listitem::getField .t node1 bullet]
+        }
+    } [list 0 {[+]}]
+    test expand.2 {collapse then expand a node} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+                        node4
+        } {
+            $t set node1 expand 0
+            update idletasks
+            set result [list [getNextVisibleNode .t node1] [listitem::getField .t node1 bullet]]
+            $t set node1 expand 1
+            update idletasks
+            lappend result [isNodeVisible .t node2] [isNodeVisible .t node3] [listitem::getField .t node1 bullet]
+        }
+    } [list {} {[+]} 1 1 {[-]}]
+    test expand.3 {collapse a hidden node} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+                        node4
+        } {
+            $t set node1 expand 0
+            $t set node2 expand 0
+            update idletasks
+            list [isNodeVisible .t node2]
+        }
+    } [list 0]
+    test expand.4 {Set the expand key to the same value it already is} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+                        node4
+        } {
+            $t set node1 expand 1
+            update idletasks
+            list [getNodeText .t node2] [getNodeText .t node3]
+        }
+    } [list node2 node3]
+    test expand.5 {Two collapse operations before display update} {
+        withTreeObserver .t {
+            node1
+                node2
+                    node3
+                        node4
+            node5
+                node6
+        } {
+            $t set node1 expand 0
+            $t set node5 expand 0
+            update idletasks
+            list [getNextVisibleNode .t node1] [getNextVisibleNode .t node5]
+        }
+        } [list node5 {}]
+    test empty-node.1 {A node with no text shouldn't disappear when the previous sibling gets moved down} {
+        withTreeObserver .t {
+            node1
+            
+            node3
+        } {
+            $t move root 1 node1
+            update idletasks
+            list [getPrevVisibleNode .t node1] [isNodeVisible .t node2]
+        }
+    } [list node2 1]
+    
+    proc myexpr {expr} {
+        if {[uplevel expr [list $expr]]} {return 1} else {
+            return [uplevel subst [list $expr]]
+        }
+    }
+
+    test extratags.1 {apply extra user-defined tags to a node} {
+        withTreeObserver .t {
+            node1
+                node2
+        } {
+            $t set node2 extratags {tag1 tag2}
+            myexpr {[.t tag ranges tag1] == [list [listitem::index .t item:node2.first] [listitem::index .t item:node2.last]]}
+        }
+    } 1
+
+
+    # Prevent tcltest from exiting while cleaning up
+    #testConstraint interactive 1
+
+    # Display the test results
+    cleanupTests
+}
+testTreeObs
+}
+# vim: set filetype=tcl :

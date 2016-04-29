@@ -1,0 +1,120 @@
+package require Tk
+#console show
+#wm withdraw .
+package require tcltest
+catch {namespace import tcltest::*}
+configure -verbose {body error}
+source xotcllite.tcl
+catch {namespace import xotcllite::*}
+
+test object.1 {simple create, set instvar, destroy} {
+   Object create o
+   lappend result [info commands o]
+   o set x 1
+   lappend result [o set x]
+   o destroy
+   lappend result [info commands o]
+} [list o 1 {}]
+
+test self.1 {} {
+    set result ""
+    Object create s1
+    lappend result [s1 self]
+    s1 proc getSelf {} {return [self]}
+    lappend result [s1 getSelf]
+    s1 proc getSelf2 {} {[self] getSelf}
+    lappend result [s1 getSelf2]
+    s1 destroy
+    set result
+} {::s1 ::s1 ::s1}
+
+test my.1 {} {
+    set result ""
+    Object create m1
+    m1 my set x 1
+    lappend result [m1 my set x]
+    m1 proc setx2 {} {my set x 2}
+    m1 setx2
+    lappend result [m1 set x]
+    m1 destroy
+    set result
+} {1 2}
+
+test class.1 {simple create, set instvar, destroy} {
+   set result {}
+   Class create c1
+   c1 create co1
+   lappend result [lsort [info commands c*1]]
+   co1 set x 1
+   lappend result [co1 set x]
+   co1 destroy
+   c1 destroy
+   lappend result [info commands c*1]
+} [list {c1 co1} 1 {}]
+
+test class.2 {simple instproc} {
+   set result {}
+   Class create c2
+   c2 instproc blah {} {}
+   c2 instproc procs {} {info commands [self]::*}
+   c2 create co2
+   set result [co2 procs]
+   co2 destroy
+   c2 destroy
+   set result
+} {::co2::destroy ::co2::my ::co2::self ::co2::blah ::co2::procs} 
+
+test init.1 {a class's instproc named init should be called upon instance creation} {
+   Class create ic1
+   ic1 instproc init {} {my set x 1}
+   ic1 create io1
+   catch {io1 set x} result
+   ic1 destroy
+   io1 destroy
+   set result
+} 1
+test init.2 {init with arguments} {
+   Class create ic2
+   ic2 instproc init {val} {my set x $val}
+   ic2 create io2 1
+   catch {io2 set x} result
+   ic2 destroy
+   io2 destroy
+   set result
+} 1
+
+test self.2 {} {
+    set result ""
+    Class create s2
+    s2 create so2
+    lappend result [so2 self]
+    so2 proc getSelf {} {return [self]}
+    lappend result [so2 getSelf]
+    so2 proc getSelf2 {} {[self] getSelf}
+    lappend result [so2 getSelf2]
+    so2 destroy
+    s2 destroy
+    set result
+} {::so2 ::so2 ::so2}
+
+test my.2 {} {
+    set result ""
+    Class create m2
+    m2 instproc setx2 {} {my set x 2}
+    m2 create mo2
+    mo2 my set x 1
+    lappend result [mo2 my set x]
+    mo2 setx2
+    lappend result [mo2 set x]
+    mo2 destroy
+    m2 destroy
+    set result
+} {1 2}
+
+
+# Prevent tcltest from exiting while cleaning up
+#testConstraint interactive 1
+
+# Display the test results
+cleanupTests
+# vim: set filetype=tcl :

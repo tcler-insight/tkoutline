@@ -1,0 +1,381 @@
+source [file join [file dirname [info script]] tabletree.tcl]
+proc testTableTree {} {
+    global argv argc
+    package require tcltest 2.1
+    catch {namespace import ::tcltest::*} msg
+    puts $msg
+    configure -verbose {body error}
+    package require Tk
+    console show
+
+    test first-last.1 {first and last visible lines for an unpacked widget} {
+        text .t
+        set result [list [firstVisibleLine .t] [lastVisibleLine .t]]
+        destroy .t
+        set result
+    } {1 1}
+
+    test first-last.2 {first and last visible lines for a packed, but empty widget} {
+        text .t
+        pack .t
+        update idletasks
+        set result [list [firstVisibleLine .t] [lastVisibleLine .t]]
+        destroy .t
+        set result
+    } {1 1}
+    
+    test first-last.3 {more than one line present in the widget} \
+        -setup {
+            text .t -height 2
+            pack .t
+            update idletasks
+        } \
+        -body {
+            .t insert 1.0 \n
+            list [firstVisibleLine .t] [lastVisibleLine .t]
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 1 2]
+        
+    test first-last.3 {scrolled down} \
+        -setup {
+            text .t -height 2
+            pack .t
+            update idletasks
+        } \
+        -body {
+            .t insert 1.0 \n\n
+            .t see 3.0
+            list [firstVisibleLine .t] [lastVisibleLine .t]
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 2 3]
+    
+    test notvisible.1 {Text widget isn't packed and nothing is visible} \
+        -setup {
+            text .t
+        } \
+        -body {
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result {}
+
+    test nowrap.1 {Text widget is only a single line high} \
+        -setup {
+            text .t -font {Courier 10} -height 1
+            pack .t
+            update idletasks
+            } \
+        -body {
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 1 [font metric {Courier 10} -linespace]]
+        
+    set h [font metric {Courier 10} -linespace]
+    set 2h [expr $h*2]
+    set 3h [expr $h*3]
+    test nowrap.2 {Text widget is 2 lines high} \
+        -setup {
+            text .t -font {Courier 10} -height 2
+            pack .t
+            update idletasks
+            } \
+        -body {
+            .t insert 1.0 \n
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 1 $h 2 $h]
+        
+    test nowrap.3 {first visible line is not the first line of the widget} \
+        -setup {
+            text .t -font {Courier 10} -height 2
+            pack .t
+            update idletasks
+        } \
+        -body {
+            .t insert 1.0 \n\n
+            .t see 3.0
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 2 $h 3 $h]
+        
+    test nowrap.4 {Room to display more lines than there are} \
+        -setup {
+            text .t -font {Courier 10} -height 2
+            pack .t
+            update idletasks
+        } \
+        -body {
+            # The way getLineHeights was written, it includes all
+            # the empty space below the last line as part of the
+            # height of that line
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 1 $h]
+        
+    test wrap.1 {Widget is single line high, but the line wraps} \
+        -setup {
+            text .t -font {Courier 10} -height 1 -width 20
+            pack .t
+            update idletasks
+        } \
+        -body {
+            .t insert 1.0 [string repeat H 25] 
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 1 $h]
+        
+    test wrap.2 {Widget is 2 lines high and the line wraps} \
+        -setup {
+            text .t -font {Courier 10} -height 2 -width 20
+            pack .t
+            update idletasks
+        } \
+        -body {
+            .t insert 1.0 [string repeat H 25] 
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 1 [expr 2*$h]]
+        
+    test wrap.3 {Some lines wrap and some don't} \
+        -setup {
+            text .t -font {Courier 10} -height 12 -width 20
+            pack .t
+            update idletasks
+        } \
+        -body {
+            .t insert end [string repeat H 25] 
+            .t insert end \n[string repeat H 5] 
+            .t insert end \n[string repeat H 45] 
+            .t insert end \n[string repeat H 25] 
+            .t insert end \n[string repeat H 5] 
+            getLineHeights .t
+        } \
+        -cleanup {
+            destroy .t
+        } \
+        -result [list 1 [expr 2*$h] 2 $h 3 [expr 3*$h] 4 [expr 2*$h] 5 [expr $h]]
+        
+    proc withTextWidget {win textOpts body} {
+        text $win -font {Courier 10} -height 12 -width 10
+        pack $win
+        eval $win configure $textOpts
+        update idletasks
+        set isError [catch [list uplevel $body] result]
+        destroy $win
+        if {$isError} {
+            error "$result\n$::errorInfo"
+        } else {
+            return $result
+        }
+    }
+        
+    test getLineHeight.1 {Single unwrapped line in the widget} {
+        withTextWidget .t {} {
+            .t insert end 1 
+            getLineHeight .t 1
+        }
+    } $h 
+    test getLineHeight.2 {Single wrapped line in the widget} {
+        withTextWidget .t {} {
+            .t insert end [string repeat 1 15]
+            getLineHeight .t 1
+        }
+    } $2h 
+    test getLineHeight.3 {Last line in widget is off the screen} {
+        withTextWidget .t {-height 3} {
+            .t insert end [string repeat 1 15]\n2\n
+            .t insert end [string repeat 3 15]
+            getLineHeight .t 3
+        }
+    } $2h 
+    test getLineHeight.4 {Last line in widget is partially on the screen} {
+        withTextWidget .t {-height 3} {
+            .t insert end [string repeat 1 15]\n2\n
+            .t insert end [string repeat 3 15]
+            .t yview scroll 1 unit
+            list [.t index @[winfo width .t],[winfo height .t]] [getLineHeight .t 3]
+        }
+    } [list 3.9 $2h ]
+    test getLineHeight.5 {no wrap, not last line in widget} {
+        withTextWidget .t {} {
+            .t insert end 1\n2 
+            getLineHeight .t 1
+        }
+    } $h 
+    test getLineHeight.6 {wrap, not last line in the widget} {
+        withTextWidget .t {} {
+            .t insert end [string repeat 1 15]\n2
+            getLineHeight .t 1
+        }
+    } $2h 
+    test getLineHeight.7 {non-last line in widget is off the screen} {
+        withTextWidget .t {-height 3} {
+            .t insert end [string repeat 1 15]\n2\n
+            .t insert end [string repeat 3 15]
+            .t see end
+            list [.t index @0,0] [getLineHeight .t 1]
+        }
+    } [list 2.0 $2h]
+    test getLineHeight.8 {non-last line in widget is partially on the screen} {
+        withTextWidget .t {-height 3} {
+            .t insert end [string repeat 1 15]\n2\n
+            .t insert end [string repeat 3 15]
+            .t yview scroll 1 unit
+            list [.t index @0,0] [getLineHeight .t 1]
+        }
+    } [list 1.10 $2h ]
+    test getLineHeight.9 {Line won't fit in a single screen} {
+        withTextWidget .t {-height 3} {
+            .t insert end [string repeat 1 35]\n2
+            getLineHeight .t 1 
+        }
+    } $3h
+    test syncLineHeights.1 {No action required} \
+        -setup {
+            text .t1
+            text .t2
+            pack .t1 .t2
+            update idletasks
+        } \
+        -body {
+            syncLineHeights .t1 .t2
+            string compare [getLineHeights .t1] [getLineHeights .t2]
+        } \
+        -cleanup {
+            destroy .t1
+            destroy .t2
+        } \
+        -result 0 
+        
+    test syncLineHeights.2 {Line on left is taller} \
+        -setup {
+            text .t1 -font {Courier 10} -width 10 -height 3
+            text .t2 -font {Courier 10} -height 3
+            pack .t1 .t2
+            update idletasks
+        } \
+        -body {
+            .t1 insert 1.0 [string repeat 1 15]\n2
+            .t2 insert 1.0 1\n2
+            syncLineHeights .t1 .t2
+            list [getLineHeights .t1] [getLineHeights .t2]
+        } \
+        -cleanup {
+            destroy .t1
+            destroy .t2
+        } \
+        -result [list [list 1 $2h 2 $h] [list 1 $2h 2 $h]] 
+    test syncLineHeights.3 {2nd sync after line height changes} \
+        -setup {
+            text .t1 -font {Courier 10} -width 10 -height 3
+            text .t2 -font {Courier 10} -height 3
+            pack .t1 .t2
+            update idletasks
+        } \
+        -body {
+            .t1 insert 1.0 [string repeat 1 15]\n2
+            .t2 insert 1.0 1\n2
+            syncLineHeights .t1 .t2
+            .t1 delete 1.0 1.10
+            syncLineHeights .t1 .t2
+            list [getLineHeights .t1] [getLineHeights .t2]
+        } \
+        -cleanup {
+            destroy .t1
+            destroy .t2
+        } \
+        -result [list [list 1 $h 2 $h] [list 1 $h 2 $h]] 
+
+    test syncLineHeights.4 {2 lines with different adjusted heights} \
+        -setup {
+            text .t1 -font {Courier 10} -width 10 -height 6
+            text .t2 -font {Courier 10} -height 6
+            pack .t1 .t2
+            update idletasks
+        } \
+        -body {
+            .t1 insert 1.0 [string repeat 1 15]\n[string repeat 2 25]\n3
+            .t2 insert 1.0 1\n2\n3
+            syncLineHeights .t1 .t2
+            list [getLineHeights .t1] [getLineHeights .t2]
+        } \
+        -cleanup {
+            destroy .t1
+            destroy .t2
+        } \
+        -result [list [list 1 $2h 2 $3h 3 $h] [list 1 $2h 2 $3h 3 $h]] 
+
+    test syncLineHeights.5 {More lines showing in one text widget than the other} \
+        -setup {
+            text .t1 -font {Courier 10} -width 10 -height 6
+            text .t2 -font {Courier 10} -height 6
+            pack .t1 .t2
+            update idletasks
+        } \
+        -body {
+            .t1 insert 1.0 [string repeat 1 15]\n[string repeat 2 25]\n3\n4\n5\n6
+            .t2 insert 1.0 1\n2\n3\n4\n5\n6
+            syncLineHeights .t1 .t2
+            list [getLineHeights .t1] [getLineHeights .t2]
+        } \
+        -cleanup {
+            destroy .t1
+            destroy .t2
+        } \
+        -result [list [list 1 $2h 2 $3h 3 $h] [list 1 $2h 2 $3h 3 $h]] 
+
+    test syncLineHeights.6 {2nd sync after line height shrinks and more lines below become visible} \
+        -setup {
+            text .t1 -font {Courier 10} -width 10 -height 4
+            text .t2 -font {Courier 10} -height 4
+            pack .t1 .t2
+            update idletasks
+        } \
+        -body {
+            .t1 insert 1.0 [string repeat 1 25]\n2\n[string repeat 3 15]\n4
+            .t2 insert 1.0 1\n2\n3\n4
+            syncLineHeights .t1 .t2
+            .t1 delete 1.0 1.20
+            syncLineHeights .t1 .t2
+            list [getLineHeights .t1] [getLineHeights .t2]
+        } \
+        -cleanup {
+            destroy .t1
+            destroy .t2
+        } \
+        -result [list [list 1 $h 2 $h 3 $2h] [list 1 $h 2 $h 3 $2h]] 
+    wm withdraw .
+        
+    # Prevent tcltest from exiting while cleaning up
+    testConstraint interactive 1
+
+    # Display the test results
+    cleanupTests
+}
+testTableTree

@@ -1,0 +1,134 @@
+lappend ::auto_path ..
+package require tcltest
+catch {namespace import tcltest::*}
+configure -verbose {body error}
+package require Tk
+#console show
+source incrsearch.tcl
+namespace eval incrsearch {namespace export *}
+namespace import incrsearch::*
+source outlinewidget.tcl
+proc withOutlineSearch {win outlineText script} {
+    set outlineText [string trim [string trimright $outlineText] \n]
+    set t [treeconvert::textToTree $outlineText] 
+    $t set root title {}
+    $t walk root n {$t set $n expand 1}
+    outlinewidget::outline $win -tree $t
+    enterSearchMode $win
+    if {[catch {uplevel $script} msg]} {
+        # Cleanup and return the error
+        $incrsearch::history del 1.0 end
+        destroy $win
+        return -code error $msg
+    } else {
+        $incrsearch::history del 1.0 end
+        destroy $win
+        return $msg
+    }
+}
+test match.1 {match single character} {
+    withOutlineSearch .o {
+        node1
+    } {
+        incrSearch d
+        list \
+            [expr [.o text index insert] - [.o getstartidx node1]] \
+            [.o text get sel.first sel.last]
+    }
+} {0.2 d}
+test match.2 {match multiple characters} {
+    withOutlineSearch .o {
+        node1
+    } {
+        incrSearch de1
+        list \
+            [expr [.o text index insert] - [.o getstartidx node1]] \
+            [.o text get sel.first sel.last]
+    }
+} {0.2 de1}
+test match.3 {matches with multiple jumps} {
+    withOutlineSearch .o {
+        x
+        a
+        ab
+        abc
+        abcd
+    } {
+        incrSearch abcd
+        list \
+            [expr [.o text index insert] - [.o getstartidx node5]] \
+            [.o text get sel.first sel.last]
+    }
+} {0.0 abcd}
+test nomatch.1 {first character doesn't match} {
+    withOutlineSearch .o {
+        node1
+    } {
+        incrSearch x
+        list \
+            [expr [.o text index insert] - [.o getstartidx node1]] \
+            [.o text tag ranges sel]
+    }
+} {0.0 {}}
+test nomatch.2 {a few characters match and then no match} {
+    withOutlineSearch .o {
+        node1
+    } {
+        incrSearch dexx
+        list \
+            [expr [.o text index insert] - [.o getstartidx node1]] \
+            [.o text get sel.first sel.last] \
+            [$incrsearch::history get "insert linestart" insert]
+    }
+} {0.2 de dexx}
+test backup.1 {Backspace after first match position} {
+    withOutlineSearch .o {
+        node1
+    } {
+        incrSearch de1
+        backSearchUpOneChar
+        list \
+            [expr [.o text index insert] - [.o getstartidx node1]] \
+            [.o text get sel.first sel.last] \
+            [$incrsearch::history get "insert linestart" insert]
+    }
+} {0.2 de de}
+test backup.2 {Backspace all the way after first match position} {
+    withOutlineSearch .o {
+        node1
+    } {
+        incrSearch de1
+        backSearchUpOneChar
+        backSearchUpOneChar
+        backSearchUpOneChar
+        list \
+            [expr [.o text index insert] - [.o getstartidx node1]] \
+            [.o text tag ranges sel] \
+            [$incrsearch::history get "insert linestart" insert]
+    }
+} {0.0 {} {}}
+
+if 0 {
+test searchAgain.1 {redo last search} {
+    withOutlineSearch .o {
+        node1
+        node2
+    } {
+    pack .o
+        incrSearch ode
+        searchAgain
+        vwait ::x
+        list \
+            [expr [.o text index insert] - [.o getstartidx node2]] \
+            [.o text get sel.first sel.last] \
+            [$incrsearch::history get "insert linestart" insert]
+    }
+} {0.2 ode ode}
+}
+
+
+
+
+#testConstraint interactive 1
+cleanupTests
+# vim: set filetype=tcl :

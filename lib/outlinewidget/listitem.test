@@ -1,0 +1,119 @@
+package require tcltest
+catch {namespace import tcltest::*}
+configure -verbose {body error}
+package require Tk
+#console show
+source listitem.tcl
+catch {text .t}
+proc withText {win script} {
+    if {[catch {uplevel $script} msg]} {
+        # Cleanup and return the error
+        $win delete 1.0 end
+        return -code error $msg
+    } else {
+        $win delete 1.0 end
+        return $msg
+    }
+}
+#set item1 [listitem::createItem item1 {field1 foo field2 bar}]
+#set item2 [listitem::createItem item2 {field1 baz field2 bugaboo}]
+set item1 [list item1 {field1 foo field2 bar} {}]
+set item2 [list item2 {field1 baz field2 bugaboo} {}]
+test insert.1 {test applying extra tags} {
+    withText .t {
+        listitem::insert .t 1.0 item1 {f1 one f2 two f3 three f4 four} {* all {f1 f2 f3} some}
+        list [.t get all.first all.last] [.t get some.first some.last]
+    }
+} [list "one two three four\n" "one two three "]
+test itemAtIdx.1 {} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 
+        listitem::itemAtIdx .t 1.0
+    }
+} item1
+test index.1 {} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 
+        list [listitem::index .t item1.first] [listitem::index .t item1.last]
+    }
+} {1.0 2.0}
+test index.2 {item name has .'s} {
+    withText .t {
+        listitem::insert .t 1.0 item1.1 {field1 foo field2 bar}
+        list [listitem::index .t item1.1.first] [listitem::index .t item1.1.last]
+    }
+} {1.0 2.0}
+test index.3 {item name has .'s} {
+    withText .t {
+        listitem::insert .t 1.0 item1.1.1 {field1 foo field2 bar}
+        list [listitem::index .t item1.1.1.first] [listitem::index .t item1.1.1.last]
+    }
+} {1.0 2.0}
+test getField.1 {} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 
+        list [listitem::getField .t item1 field1] [listitem::getField .t item1 field2]
+    }
+} {foo bar}
+test next.1 {next for the first and last items} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 $item2
+        list [listitem::next .t item1] [listitem::next .t item2]
+    }
+} {item2 {}}
+
+test prev.1 {prev for the first and last items} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 $item2
+        list [listitem::prev .t item2] [listitem::prev .t item1]
+    }
+} {item1 {}}
+
+test setField.1 {} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 
+        listitem::setField .t item1 field1 baz
+        list [listitem::getField .t item1 field1] [listitem::getField .t item1 field2]
+    }
+} {baz bar}
+test exists.1 {item exists} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 
+        listitem::exists .t item1
+    }
+} 1
+test exists.1 {item doesn't exist} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1 
+        listitem::exists .t item2
+    }
+} 0
+
+
+test isIdxInField.1 {} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1
+        list [listitem::isIdxInField .t field1 1.0]\
+             [listitem::isIdxInField .t field2 1.0]
+    }
+} [list 1 0]
+
+test interactive-insert.1 {make sure the field tags are extended} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1
+        .t insert [listitem::index .t item1.field2.first] hi
+        listitem::getField .t item1 field2
+    }
+} hibar
+
+test interactive-insert.2 {make sure the field tags are extended} {
+    withText .t {
+        eval listitem::insert .t 1.0 $item1
+        .t insert [listitem::index .t item1.field2.last] hi
+        listitem::getField .t item1 field2
+    }
+} barhi
+
+
+#testConstraint interactive 1
+cleanupTests

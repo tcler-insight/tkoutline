@@ -1,0 +1,81 @@
+package require tcltest
+namespace import tcltest::*
+configure -verbose {body error}
+lappend auto_path ..
+package require wikimarkup
+wm withdraw .
+#console show
+text .t
+wikimarkup::addWikiRules .t
+test style-bold.1 {simple bold markup} {
+    .t delete 1.0 end
+    .t insert 1.0 *bold*\n
+    .t tag ranges bold
+} {1.0 1.5}
+test style-bold.2 {bold in middle of line} {
+    .t delete 1.0 end
+    .t insert 1.0 "emphasize *bold* emphasize\n"
+    .t tag ranges bold
+} {1.10 1.15}
+test style-bold.3 {bold with spaces} {
+    .t delete 1.0 end
+    .t insert 1.0 "*bold this entire string*\n"
+    .t tag ranges bold
+} {1.0 1.24}
+test style-bold.4 {bold doesn't match} {
+    .t delete 1.0 end
+    .t insert 1.0 "2 * 3 = 5\n"
+    .t tag ranges bold
+} {}
+test style-bold.5 {shortest possible match} {
+    .t delete 1.0 end
+    .t insert 1.0 "*bold* another* \n"
+    .t tag ranges bold
+} {1.0 1.5}
+test style-italics.1 {simple italics} {
+    .t delete 1.0 end
+    .t insert 1.0 "/italic/\n"
+    .t tag ranges italic
+} {1.0 1.7}
+test style-italics.2 {italics doesn't match url} {
+    .t delete 1.0 end
+    .t insert 1.0 "http://mini.net/tcl/tclkit\n"
+    .t tag ranges italic
+} {}
+test style-multiple.1 {two styles on the same line} bug {
+    .t delete 1.0 end
+    .t insert 1.0 "/italic/ *bold*"
+    list [.t tag ranges italic] [.t tag ranges bold]
+} [list {1.0 1.7} {1.9 1.14}]
+test style-multiple.2 {two styles on the same line} {
+    .t delete 1.0 end
+    .t insert 1.0 "/italic/ test *bold*"
+    list [.t tag ranges italic] [.t tag ranges bold]
+} [list {1.0 1.7} {1.14 1.19}]
+test url.1 {simple url} {
+    .t delete 1.0 end
+    .t insert 1.0 "http://www.google.com"
+    .t tag ranges url
+    } [list 1.0 1.21]
+test url.2 {url with parameters} {
+    .t delete 1.0 end
+    .t insert 1.0 "http://sourceforge.net/mailarchive/forum.php?forum_id=3854"
+    .t tag ranges url
+} [list 1.0 1.58]
+test wikilink.1 {simple non-existent wiki link} {
+    .t delete 1.0 end
+    .t insert 1.0 {This is an [empty link]}
+    .t tag ranges emptylink
+    } [list 1.11 1.23]
+test wikilink.2 {simple existent wiki link} {
+    .t delete 1.0 end
+    .t insert 1.0 "Existing link: \[[info script]]"
+    .t tag ranges wikilink
+    } [list 1.15 "1.[expr 17 + [string length [info script]]]"]
+test magicbutton.1 {simple magic button} {
+    .t delete 1.0 end
+    .t insert 1.0 {Magic button: [%button%]}
+    list [.t tag ranges button] [.t tag ranges hidden] [.t tag ranges wikilink] [.t tag ranges emptylink]
+    } [list {1.14 1.24} {1.14 1.16 1.22 1.24} {} {}]
+cleanupTests
+# vim: set filetype=tcl :

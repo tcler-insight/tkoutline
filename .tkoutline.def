@@ -1,0 +1,56 @@
+! Every line in this file must be a blank line, or a valid configuration option, or if it begins with an exclamation point (!), then it is a comment
+
+! *Keybindings*
+	*dragStartKey: <ButtonPress-1>
+	*dragMotionKey: <B1-Motion>
+	*dragStopKey: <ButtonRelease-1>
+	*clickKey: <ButtonPress><ButtonRelease>
+	*demoteKey: <Control-Right> <Tab>
+	*promoteKey: <Control-Left> <Shift-Tab>
+	*nodeUpKey: <Control-Up>
+	*nodeDownKey: <Control-Down>
+	*insertChildKey: <Insert>
+	*insertSiblingKey: <Control-Insert>
+	*splitNodeKey: <Return>
+	*mergeNodeRightKey: <Delete>
+	*mergeNodeLeftKey: <BackSpace>
+	*deleteNodeKey: <Control-Delete>
+	*toggleBulletKey: <Control-b>
+	*expandKey: <Meta-e>
+	*collapseKey: <Meta-c>
+    *nextOutlineKey: <Control-Next>
+    *prevOutlineKey: <Control-Prior>
+	*saveKey: <Control-s>
+	*saveAsKey: <Meta-s>
+	*closeKey: <Meta-d>
+	*openKey: <Control-o>
+	*exitKey: <Alt-x>
+	*bulletFont: Courier 8
+	*wikimarkup: wikilinks urls style
+	*useBulletImages: 1
+	*allowTclSourceDataFiles: 0
+	
+	! If you want a sequence of keys to trigger an action then put the 
+	! keystrokes without a space:
+	!*exitKey <Control-x><Control-c>
+	
+	! If you want than one choice of keybindings for an action then
+	! separate with a space
+	!*exitKey <Control-x><Control-c> <Control-q>
+! *Font and color examples*
+	! Any standard Tk options can be included in this file as well
+	! Some examples follow.  Remove the '!' to activate
+	
+	! Examples for changing the font for node text (format is font name, 
+	! then font size, then font style)
+	!*Text.font: "Times New Roman" 14
+	!*Text.font: Courier 16 italics
+	
+	! This would work as well, except it would probably effect
+	! all fonts (like in menus) rather than just node text
+	!*font: Courier 12 bold
+	
+	! Example for changing foreground and background color
+	!*background: Gray
+	!*foreground: black
+

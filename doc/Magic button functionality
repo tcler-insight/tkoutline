@@ -1,0 +1,50 @@
+{{expand 1} {{{expand 1 title Introduction} {{{expand 0 title 
+{A magic button is a special kind of link, which instead of launching another outline when click, will instead execute a tkoutline script.}} {}} {{expand 0 title 
+{A magic button will get the contents of the script to execute from all its descendent's text}} {}} {{expand 0 title 
+{This means that all the descendent text must be valid Tcl/Tk code in order avoid an error}} {}}}} {{expand 0 title 
+{Using a magic button}} {}} {{expand 0 title 
+{Creating your own magic button}} {}} {{expand 1 title 
+{Magic button examples}} {{{expand 0 title 
+{See [About Tkoutline#detailed version id]}} {}} {{expand 0 title 
+{See [Unit Tests]}} {}} {{expand 1 title 
+{[%Display a message to the console%]}} {{{expand 0 title 
+{console show}} {}} {{expand 0 title 
+{puts "hello console"}} {}} {{expand 0 title 
+{puts "type 'console hide' or click the X to hide the console again"}} {}}}} {{expand 1 title 
+{Example of code that contains an error}} {{{expand 1 title 
+{[%Error%]}} {{{expand 0 title 
+{This is not valid Tcl syntax.}} {}} {{expand 0 title 
+{And neither is this, but execution of this script will halt before reaching here.}} {}}}}}} {{expand 1 title 
+{Text coloring}} {{{expand 1 title 
+{Click to assign a text color to the first four levels: [%Color levels%]}} {{{expand 1 title foreach\ \{level\ color\}\ \{1\ black\ 2\ \{dark\ blue\}\ 3\ \{dark\ green\}\ 4\ \{dark\ grey\}\}\ \{} {{{expand 0 title 
+{text tag configure level$level -foreground $color}} {}} {{expand 0 title 
+{text tag lower level$level}} {}}}} {{expand 0 title \}} {}}}} {{expand 1 title 
+{Undo the coloring of level: [%Uncolor levels%]}} {{{expand 0 title 
+{foreach level {1 2 3 4} {text tag configure level$level -foreground ""}}} {}}}}}} {{expand 1 title Sorting} {{{expand 0 title 
+{Clicking on the sort and scramble buttons below will cause the children of the [#Data to sort] node to be sorted and scrambled respectively}} {}} {{expand 0 title 
+{[%Sort%]}} {{{expand 0 title 
+{# Helper Functions}} {{{expand 0 title 
+{# Helper function for sorting nodes alphabetically by node text}} {}} {{expand 1 title proc\ nodeSortCmd\ \{tree\ node1\ node2\}\ \{} {{{expand 0 title 
+{return [string compare [$tree set $node1 title] [$tree set $node2 title]]}} {}}}} {{expand 0 title \}} {}} {{expand 0 title 
+{}} {}} {{expand 0 title 
+{# Sorts the children of the given node}} {}} {{expand 1 title proc\ sortChildren\ \{tree\ node\}\ \{} {{{expand 0 title 
+{set nodes [lsort -command [list nodeSortCmd $tree] [$tree children $node]]}} {}} {{expand 1 title if\ \{\[llength\ \$nodes\]\ >\ 0\}\ \{} {{{expand 0 title 
+{eval $tree move $node 0 $nodes}} {}}}} {{expand 0 title \}} {}}}} {{expand 0 title \}} {}}}} {{expand 0 title 
+{# Main code}} {{{expand 0 title 
+{set nodeToSort [lindex [tree children [tree parent [getnode current]]] end]}} {}} {{expand 0 title 
+{sortChildren [treecmd] $nodeToSort}} {}}}}}} {{expand 0 title 
+{[%Scramble%]}} {{{expand 0 title 
+{# Helper functions}} {{{expand 0 title 
+{# From http://wiki.tcl.tk/9923}} {}} {{expand 0 title proc\ shuffle6\ \{\ list\ \}\ \{} {{{expand 1 title 
+{set n [llength $list]}} {{{expand 1 title for\ \{\ set\ i\ 1\ \}\ \{\ \$i\ <\ \$n\ \}\ \{\ incr\ i\ \}\ \{} {{{expand 0 title 
+{set j [expr { int( rand() * $n ) }]}} {}} {{expand 0 title 
+{set temp [lindex $list $i]}} {}} {{expand 0 title 
+{lset list $i [lindex $list $j]}} {}} {{expand 0 title 
+{lset list $j $temp}} {}}}} {{expand 0 title \}} {}} {{expand 0 title 
+{return $list}} {}}}} {{expand 0 title \}} {}}}} {{expand 1 title proc\ scrambleChildren\ \{tree\ node\}\ \{} {{{expand 0 title 
+{set scrambled [shuffle6 [$tree children $node]]}} {}} {{expand 0 title 
+{eval $tree move $node 0 $scrambled}} {}}}} {{expand 0 title \}} {}}}} {{expand 0 title 
+{# Main code}} {{{expand 0 title 
+{set nodeToScramble [lindex [tree children [tree parent [getnode current]]] end]}} {}} {{expand 0 title 
+{scrambleChildren [treecmd] $nodeToScramble}} {}}}}}} {{expand 1 title 
+{Data to sort}} {{{expand 0 title Billy} {}} {{expand 0 title Joe} {}} {{expand 0 title Dieter} {}} {{expand 0 title Mary} {}} {{expand 0 title Max} {}}}}}}}}}}

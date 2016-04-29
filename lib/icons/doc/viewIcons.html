@@ -1,0 +1,156 @@
+ 
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ICONS: viewIcons</title>
+<meta name="description" content="ICONS: Provides a platform independent icon library facility for TCL/TK">
+<meta name="keywords" content="windows development">
+<meta name="generator" content="1st Page 2000">
+<meta name="author" content="Adrian Davis">
+<meta name="robots" content="nofollow">
+<link rev="made" href="mailto:adrian@satisoft.com" title="Icons feedback">
+</head>
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#000080">
+
+<table bgcolor=#000000 width=100% cellpadding=0>
+<tr>
+  <td><b><font size=7 color=#FFFF00 face="Arial, Helvetica">ICONS - viewIcons</font></b></td>
+  <td rowspan=2 width=50><img src="logo125.gif"></td>
+</tr>
+<tr valign=bottom>
+  <td>
+    <table bgcolor=#999999 width=100%>
+    <tr>
+	<td><a href="index.html"><b><font color=#FFFFFF face="Arial, Helvetica">Home</a></td>
+    <td><a href="manpage.html"><b><font color=#FFFFFF face="Arial, Helvetica">Man Page</a></td>
+	<td><a href="libraries.html"><b><font color=#FFFFFF face="Arial, Helvetica">Libraries</a></td>
+    <td><a href="examples.html"><b><font color=#FFFFFF face="Arial, Helvetica">Examples</a></td>
+	<td><a href="download.html"><b><font color=#FFFFFF face="Arial, Helvetica">Download</a></td>
+	<td><a href="license.html"><b><font color=#FFFFFF face="Arial, Helvetica">License</a></td>
+    <td><a href="contact.html"><b><font color=#FFFFFF face="Arial, Helvetica">Contact</a></td>
+    </tr>
+    </table>
+  </td>
+</tr>
+</table>
+
+<font color=black face="Arial, Helvetica" size=2>
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Starting viewIcons</font>
+</tr>
+</td>
+</table>
+<p>
+<b>viewIcons</b> provides a facility to display the contents of ICONS icon libraries.
+By default, the directory given by the TCL command <tt>info library</tt> is the default
+icon library directory for <b>viewIcons</b>.
+<p>
+An alternative default directory can be specified as the first parameter to the <tt>viewIcons.tcl</tt>
+command.
+<p>
+<b><u>Examples:</u></b>
+<p>
+The following examples assume a Unix/Linux type operating system. Absolute and relative
+pathnames may be used.
+<p>
+<tt>viewIcons.tcl .</tt>
+<p>
+Sets the default icon library directory to be the current (working) directory.
+<p>
+<tt>viewIcons.tcl /home/adavis</tt>
+<p>
+Sets the default icon library directory to <tt>/home/adavis</tt>.
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Using viewIcons</font>
+</tr>
+</td>
+</table>
+<p>
+When <b>viewIcons</b> is started the icon display area of the screen is blank. If there
+is an icon library in the default location pressing the <b>View</b> button will display
+its contents.
+<p>
+<img src="viewIcons.gif">
+<p>
+The buttons and entry fields at the top of the <b>viewIcons</b> window have the following functions:-
+<p>
+<table border>
+<tr><td>Name</td><td>Type</td><td>Description</td><td>Default</td></tr>
+<tr><td><font size=2>Library</td><td><font size=2>Entry</td><td><font size=2>Fully qualified name of icon library to be displayed.</td><td><font size=2>File <tt>tkIcons</tt> in <tt>info library</tt> directory.</tr>
+<tr><td><font size=2>Browse</td><td><font size=2>Button</td><td><font size=2>Opens icon library file selection dialog box.</td><td><font size=2>N/A</td></tr>
+<tr><td><font size=2>Groups</td><td><font size=2>Entry</td><td><font size=2>List of icon groups to be displayed.</td><td><font size=2>Display all groups ("*").</td></tr>
+<tr><td><font size=2>View</td><td><font size=2>Button</td><td><font size=2>Updates window to display specified icon library.</td><td><font size=2>N/A</td></tr>
+<tr><td><font size=2>Columns</td><td><font size=2>Buttons</td><td><font size=2>Sets the number of columns for the icon display.</td><td><font size=2>14</td></tr>
+<tr><td><font size=2>Exit</td><td><font size=2>Button</td><td><font size=2>Exit from viewIcons.</td><td><font size=2>N/A</td></tr>
+</table>
+<p>
+The icon library file can be changed by typing a new filename into the <b>Library</b> field
+then pressing the "Enter/Return" key or the <b>View</b> button. Alternatively, pressing the
+<b>Browse</b> button will display a file selection dialog box. When a file is selected from
+the dialog the icon display area will update automatically. 
+<p>
+The icon groups displayed can be changed by typing a space separated list of groups into the
+<b>Groups</b> field then pressing the "Enter/Return" key or the <b>View</b> button.
+<p>
+To display the details of an icon move the mouse pointer to the required icon. The information will
+be displayed in a "pop up" window:
+<p>
+<img src="iconInfo.gif">
+<p>
+<p>
+<table bgcolor=#CCCCCC width=100%>
+<tr>
+<td>
+<font size=3>Using The Clipboard and Primary Transfer</font>
+</tr>
+</td>
+</table>
+<p>
+To create a complete "image create" command in the clipboard, move the mouse pointer to the
+required icon then press the left mouse button. There will be a "bleep" to confirm that the
+command has been generated.
+<p>
+<b><u>Example:</u></b>
+<p>
+Clicking on the "folder16" icon of the <b>kde</b> standard library will generate the following
+command in the clipboard:-
+<pre>
+image create photo folder16 -data {
+   R0lGODlhEAAQAIYAAPwCBAQCBExKTBwWHMzKzOzq7ERCRExGTCwqLARqnAQ+
+   ZHR2dKyqrNTOzHx2fCQiJMTi9NTu9HzC3AxmnAQ+XPTm7Dy67DymzITC3IzG
+   5AxypHRydKymrMzOzOzu7BweHByy9AyGtFyy1IzG3NTu/ARupFRSVByazBR6
+   rAyGvFyuzJTK3MTm9BR+tAxWhHS61MTi7Pz+/IymvCxulBRelAx2rHS63Pz6
+   /PTy9PTu9Nza3ISitBRupFSixNTS1CxqnDQyNMzGzOTi5MTCxMTGxGxubGxq
+   bLy2vLSutGRiZLy6vLSytKyurDQuNFxaXKSipDw6PAAAAAAAAAAAAAAAAAAA
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAAA
+   LAAAAAAQABAAAAfDgACCAAECg4eIAAMEBQYHCImDBgkKCwwNBQIBBw4Bhw8Q
+   ERITFJYEFQUFnoIPFhcYoRkaFBscHR4Ggh8gIRciEiMQJBkltCa6JyUoKSkX
+   KhIrLCQYuQAPLS4TEyUhKb0qLzDVAjEFMjMuNBMoNcw21QY3ODkFOjs82RM1
+   PfDzFRU3fOggcM7Fj2pAgggRokOHDx9DhhAZUqQaISBGhjwMEvEIkiIHEgUA
+   kgSJkiNLmFSMJChAEydPGBSBwvJQgAc0/QQCACH+aENyZWF0ZWQgYnkgQk1Q
+   VG9HSUYgUHJvIHZlcnNpb24gMi41DQqpIERldmVsQ29yIDE5OTcsMTk5OC4g
+   QWxsIHJpZ2h0cyByZXNlcnZlZC4NCmh0dHA6Ly93d3cuZGV2ZWxjb3IuY29t
+   ADs=
+}
+</pre>
+<p>
+When using an X-Windows environment, such as CDE or KDE, the "image create" command is also
+made available for Primary Transfer. In this case, pressing <b>Shift-Ins</b> will copy the
+"image create" command.
+<p>
+<hr>
+<small>
+Copyright &copy; 2002 <a href="mailto:adrian@satisoft.com">Adrian Davis</a>.
+</small>
+</center>
+</body>
+</html>
+

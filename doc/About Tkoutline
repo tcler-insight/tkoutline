@@ -1,0 +1,36 @@
+{{expand 1} {{{expand 1 title *About*} {{{expand 0 nobullet {} title 
+{Tkoutline - version 0.93}} {}} {{expand 0 nobullet {} title 
+{[%Click here to show detailed version id%]}} {{{expand 0 title 
+{set msg [tree set [tree previous [getnode current]] title]}} {}} {{expand 0 title 
+{append msg \n[::tkoutline::version_id $::tkoutline::topdir]}} {}} {{expand 0 title 
+{tk_messageBox -message $msg -title "Tkoutline version"}} {}}}} {{expand 0 nobullet {} title 
+{}} {}} {{expand 0 nobullet {} title 
+{Copyright (C) 2004 Brian Theado}} {}} {{expand 0 nobullet {} title 
+{Tkoutline comes with ABSOLUTELY NO WARRANTY (see [COPYING#NO WARRANTY] for details).  This is free software, and you are welcome to redistribute it under certain conditions (see [COPYING#TERMS AND CONDITIONS] for details)}} {}} {{expand 0 nobullet {} title 
+{}} {}}}} {{expand 1 title *Contact*} {{{expand 0 nobullet {} title btheado@users.sourceforge.net} {}} {{expand 0 nobullet {} title http://tkoutline.sourceforge.net} {}} {{expand 0 nobullet {} title 
+{}} {}}}} {{expand 0 title *Features*} {{{expand 0 title 
+{Cross-platform: runs anywhere Tcl/Tk runs}} {}} {{expand 1 title 
+{Behaves similar to a text editor}} {{{expand 0 title 
+{Nodes are alway "active" and cursor movement between nodes is smooth}} {}} {{expand 0 title 
+{Nodes can be split at the cursor into two adjacent nodes by hitting the enter key}} {}} {{expand 0 title 
+{Two adjacent nodes can be merged by hitting delete at the end of a line or backspace at the beginning of a line}} {}} {{expand 0 title 
+{Word wrap at the end of a line}} {}}}} {{expand 0 title 
+{Multiple outline support via a tabbed notebook interface}} {}} {{expand 0 title 
+{Inter-outline hyperlink support using wiki syntax (square braces)}} {}} {{expand 0 title 
+{External URL hyperlink support}} {}} {{expand 0 title 
+{Support for *bold*  /italics/  _underline_ and -strikethrough- formatting}} {}} {{expand 0 title 
+{Drag and Drop movement of nodes}} {}} {{expand 0 title 
+{"Size" of each collapsed node is displayed}} {}} {{expand 0 title 
+{Export to ascii, html, xml, opml, and emailable text}} {}} {{expand 0 title 
+{Save subtree, load tree as subtree}} {}} {{expand 0 title 
+{Key bindings are externally configurable}} {}}}} {{expand 0 title 
+{*Uses for*}} {{{expand 0 title 
+{Organize notes in a collapsable hierarchy}} {}} {{expand 0 title 
+{Organize large sets of notes as an interlinked web of outlines}} {}} {{expand 0 title 
+{Enhance notes with internet hyperlinks}} {}} {{expand 0 title 
+{Organize and annotate internet hyperlinks}} {}} {{expand 0 title Brainstorming} {}} {{expand 0 title Others...} {}}}} {{expand 0 title *Requirements*} {{{expand 0 title 
+{Tcl/Tk 8.3 or greater}} {}}}} {{expand 0 title 
+{*[Unit Tests]*}} {}} {{expand 0 title 
+{*[Implementation Details]*}} {}} {{expand 0 title 
+{*[Changelog]*}} {}} {{expand 0 title 
+{*[User Manual]*}} {}}}}

@@ -1,0 +1,191 @@
+ 
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ICONS: Man Page</title>
+<meta name="description" content="ICONS: Provides a platform independent icon library facility for TCL/TK">
+<meta name="keywords" content="windows development">
+<meta name="generator" content="1st Page 2000">
+<meta name="author" content="Adrian Davis">
+<meta name="robots" content="nofollow">
+<link rev="made" href="mailto:adrian@satisoft.com" title="Icons feedback">
+</head>
+<body bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#000080">
+
+<table bgcolor=#000000 width=100% cellpadding=0>
+<tr>
+  <td><b><font size=7 color=#FFFF00 face="Arial, Helvetica">ICONS - Man Page</font></b></td>
+  <td rowspan=2 width=50><img src="logo125.gif"></td>
+</tr>
+<tr valign=bottom>
+  <td>
+    <table bgcolor=#999999 width=100%>
+    <tr>
+    <td><a href="index.html"><b><font color=#FFFFFF face="Arial, Helvetica">Home</a></td>
+	<td><a href="viewIcons.html"><b><font color=#FFFFFF face="Arial, Helvetica">viewIcons</a></td>
+	<td><a href="libraries.html"><b><font color=#FFFFFF face="Arial, Helvetica">Libraries</a></td>
+    <td><a href="examples.html"><b><font color=#FFFFFF face="Arial, Helvetica">Examples</a></td>
+	<td><a href="download.html"><b><font color=#FFFFFF face="Arial, Helvetica">Download</a></td>
+	<td><a href="license.html"><b><font color=#FFFFFF face="Arial, Helvetica">License</a></td>
+    <td><a href="contact.html"><b><font color=#FFFFFF face="Arial, Helvetica">Contact</a></td>
+    </tr>
+    </table>
+  </td>
+</tr>
+</table>
+
+<font color=black face="Arial, Helvetica" size=2>
+<p>
+<dl>
+<dd><a href="#name">NAME</a>
+<dl><dd>::icons::icons - Create icon images from icon library.</dl>
+<dd><a href="#synopsis">EXPORTS</a>
+<dl>
+<dd>icons
+</dl>
+<dd><a href="#synopsis">SYNOPSIS</a>
+<dl>
+<dd><b>package require icons ?1.0?</b>
+<dd><b>icons::icons</b> <i>mode </i>?<i>option value(s) ...</I>? ?<i>icon-list</i>?
+</dl>
+<dd><a href="#description">DESCRIPTION</a>
+<dl>
+<dd><a href="#create"><b>icons create </b>?<i>option value(s) ...</i>? ?<i>icon-list</i>?</a>
+<dl>
+<dd><a href="#description-file1"><b>-file </b><i>filename</i></a>
+<dd><a href="#description-group1"><b>-group </b><i>group-list</i></a>
+<dd><a href="#description-icon1"><i>icon-list</i></a>
+</dl>
+<dd><a href="#delete"><b>icons delete </b><i>icon-list</i>
+<dl>
+<dd><a href="#description-icon1"><i>icon-list</i></a>
+</dl>
+<dd><a href="#query"><b>icons query </b>?<i>option value(s) ...</i>? ?<i>icon-list</i>?</a>
+<dl>
+<dd><a href="#description-file2"><b>-file </b><i>filename</i></a>
+<dd><a href="#description-group2"><b>-group </b><i>group-list</i></a>
+<dd><a href="#description-items2"><b>-items </b><i>items</i></a>
+<dd><a href="#description-icon3"><i>icon-list</i></a>
+</dl>
+</dl>
+<dd><A HREF="#format">ICON LIBRARY FORMAT</A>
+<dl>
+<dd><i>name</i>:<i>groups</i>:<i>type</i>:<i>size</i>:<i>image-data</i><dl>
+</dl>
+</dl>
+<p>
+</dl><hr>
+<h3><a name="name">NAME</a></h3>
+icons::icons - Create images from icon library.
+<h3><a name="synopsis">SYNOPSIS<a></h3>
+<b>package require icons ?1.0?</b>
+<p>
+<b>icons::icons</b> <i>mode </i>?<i>option value(s) ...</i>? ?<i>icon-list</i>?<br>
+<h3><a name="exports">EXPORTS</a></h3>
+icons<br>
+<h3><a name="description">DESCRIPTION</a></h3>
+The <b>icons</b> command is used to create, delete, and query icon images
+stored in the ICONS icon library format. It can take several different forms,
+depending on the <i>mode</i> argument.  The legal forms are:
+<p>
+<dl>
+<p><dt><a name="create"><b>icons create </b>?<i>option value ...</i>? ?<i>icon-list</i>?</a><dd>
+Creates new icon images as specified by <b>-group</b> -or- <i>icon-list</i> from the
+specified/default icon library. The icon images created are named <b>::icon::<i>icon-name</i></b>.
+A list of the names of the icons created is returned. A <i>group-list</i> and/or <i>icon-list</i>
+must be specified.
+<p>
+<a name="description-file1"><b>-file </b><i>filename</i></a>
+<dl>
+<dd>Specifies the name of the icon library file to be used. The default name is <tt>tkIcons</tt>
+in the directory given by <tt>info library</tt>. If a <i>filename</i> is specified, <b>icons</b>
+will first check to see if it identifies a file relative to the <tt>info library</tt> directory.
+If not it will be assumed to be a fully qualified filename.
+</dl>
+<p>
+<a name="description-group1"><b>-group </b><i>group-list</i></a>
+<dl>
+<dd>Specifies a <i>group</i> -or- <i>group-list</i> for which icon images will be created.
+To create icon images for all icons in the specified library use asterisk as the group
+(<tt>-group *</tt>). This option may be used in conjunction with an <i>icon-list</i>.
+</dl>
+<p>
+<a name="description-icon1"><i>icon-list</i></a>
+<dl>
+<dd>Specifies an <i>icon</i> -or- <i>icon-list</i> for which icon images will be created.
+This option may be used in conjunction with a <i>group-list</i>.
+</dl>
+
+<p><dt><a name="delete"><b>icons delete </b><i>icon-list</i></a><dd>
+Deletes each of the icon images specified in the <i>icon-list</i>. An <i>icon-list</i> must
+be specified.
+<p>
+<a name="description-icon1"><i>icon-list</i></a>
+<dl>
+<dd>Specifies an <i>icon</i> -or- <i>icon-list</i> for which icon images will be deleted.
+</dl>
+
+<p><dt><a name="query"><b>icons query </b>?<i>option value ...</i>? ?<i>icon-list</i>?</a><dd>
+Returns the data specified by <b>-items</b> from the specified/default icon library. The result
+is returned as a list. Each item in the list is a list of data as specified by the <b>-items</b>
+option. A <i>group-list</i> and/or <i>icon-list</i> must be specified.
+<p>
+<a name="description-file2"><b>-file </b><i>filename</i></a>
+<dl>
+<dd>Specifies the name of the icon library file to be used. The default name is <tt>tkIcons</tt>
+in the directory given by <tt>info library</tt>. If a <i>filename</i> is specified, <b>icons</b>
+will first check to see if it identifies a file relative to the <tt>info library</tt> directory.
+If not it will be assumed to be a fully qualified filename.
+</dl>
+<p>
+<a name="description-group2"><b>-group </b><i>group-list</i></a>
+<dl>
+<dd>Specifies a <i>group</i> -or- <i>group-list</i> for which icon images will be queried.
+To query all icons in the specified library use asterisk as the group (<tt>-group *</tt>).
+This option may be used in conjunction with an <i>icon-list</i>.
+</dl>
+<p>
+<a name="description-items1"><b>-items </b><i>items</i></a>
+<dl>
+<dd>Specifies the data items, and their order, in the query result. The default items are
+<b>ngts</b>. The valid items are:
+<dl>
+<dd><table>
+<tr><td><font size=2><b>n</b></td><td><font size=2> - Name (Icon)</td></tr>
+<tr><td><font size=2><b>g</b></td><td><font size=2> - Groups</td></tr>
+<tr><td><font size=2><b>t</b></td><td><font size=2> - Type</td></tr>
+<tr><td><font size=2><b>s</b></td><td><font size=2> - Size</td></tr>
+<tr><td><font size=2><b>d</b></td><td><font size=2> - Data (Image)</td></tr>
+</table>
+</dl>
+</dl>
+<p>
+<a name="description-icon3"><i>icon-list</i></a>
+<dl>
+<dd>Specifies an <i>icon</i> -or- <i>icon-list</i> for which icon images will be queried.
+This option may be used in conjunction with a <i>group-list</i>.
+</dl>
+</dl>
+
+<h3><a name="format">ICON LIBRARY FORMAT</a></h3>
+Icon libraries have the following format:
+<p>
+<i>name</i>:<i>groups</i>:<i>type</i>:<i>size</i>:<i>image-data</i>
+<dl>
+<dd><table>
+<tr><td><font size=2><b><i>name</i></b></td><td><font size=2>Icon name (Must be unique).
+<tr><td><font size=2><b><i>groups</i></b></td><td><font size=2>List of groups to which icon belongs (Must be at least one).
+<tr><td><font size=2><b><i>type</i></b></td><td><font size=2>Image data type (Only <tt>photo</tt> currently supported).
+<tr><td><font size=2><b><i>size</i></b></td><td><font size=2>Size of icon (<i>width</i><b>x</b><i>height</i>, In pixels).
+<tr><td><font size=2><b><i>image-data</i></b></td><td><font size=2>Image data (Base64 encoded GIF).
+</table>
+</dl>
+<p>
+<hr>
+<small>
+Copyright &copy; 2002 <a href="mailto:adrian@satisoft.com">Adrian Davis</a>.
+</small>
+</center>
+</body>
+</html>
+
